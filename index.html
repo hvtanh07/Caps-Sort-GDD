@@ -115,7 +115,6 @@ main{container-type:inline-size;padding:48px clamp(20px,5vw,64px) 30vh;width:100
 .pinl{display:block;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper);font:700 .92rem/27px var(--display);text-align:center}
 .legend b{font-weight:600}
 .legend .d{display:block;color:var(--muted);font-size:.94rem}
-.hero .still{margin:22px 0 0;font-size:.94rem;color:var(--muted);max-width:60ch}
 .field{margin:0;justify-self:start;width:100%;max-width:372px}
 .field-box{background:var(--surface);border:1px solid var(--line);border-radius:30px;padding:16px;overflow:hidden}
 .field svg{display:block;width:100%;height:auto}
@@ -254,8 +253,6 @@ mark.hit{background:var(--mark);color:#18203A;border-radius:3px;padding:0 1px}
   .sec>h2 .cap{width:42px;height:42px;font-size:1.4rem}
 }
 @media (prefers-reduced-motion:reduce){
-  .belt-dot{animation:none}
-  .field-foot{display:none}
   .part{transition:none}
 }
 @media print{
@@ -727,9 +724,6 @@ function view(l){
     ['D',t('Front row','Hàng đầu'),t('The boxes the player can tap and send up.','Những hộp người chơi có thể chạm để đưa lên.')],
     ['E',t('Queues','Hàng chờ'),t('Boxes wait here, below the conveyor.','Các hộp đợi ở đây, bên dưới băng chuyền.')]
   ];
-  const wips=[];
-  SECTIONS.forEach(s=>{if(s.wip)wips.push(s);else(s.subs||[]).forEach(u=>{if(u.wip)wips.push(u);});});
-  wips.sort((a,b)=>parseFloat(a.n)-parseFloat(b.n));
   const hero=`<div class="hero" id="top" data-sec="top" data-spy="top">
     <div>
       <h1>Caps Sorting</h1>
@@ -737,7 +731,6 @@ function view(l){
       <p class="pitch">${t(`Send boxes up to the slots, let them collect matching items from the conveyor, and clear every queue.`,
                            `Đưa hộp lên các ô, để hộp gom vật phẩm cùng màu trên băng chuyền, rồi dọn sạch mọi hàng chờ.`)}</p>
       <ul class="legend">${legend.map(g=>`<li><button type="button" data-part="${g[0]}" aria-pressed="false"><span class="pinl" data-nosearch>${g[0]}</span><span><b>${g[1]}</b><span class="d">${g[2]}</span></span></button></li>`).join('')}</ul>
-      <p class="still">${t('Still being written:','Các phần còn đang viết:')} ${wips.map(w=>`<a href="#${w.id}">${w.n} ${esc(w[l])}</a>`).join(', ')}.</p>
     </div>
     <figure class="field${paused?' paused':''}" id="field">
       <div class="field-box">${fieldSVG(t('Sketch of the play screen: Enter Paths on top (two in this example) lead into a looping conveyor, with a row of slots and queues of boxes below.','Hình minh họa màn chơi: các Đường vào phía trên (ví dụ này có hai đường) dẫn vào băng chuyền chạy vòng, bên dưới là hàng ô và các hàng chờ.'))}</div>
