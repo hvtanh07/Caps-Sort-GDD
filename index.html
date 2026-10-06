@@ -388,8 +388,8 @@ function fieldSVG(label){
     offs.forEach((o,l)=>{for(let r=0;r<5;r++){enter+=`<circle class="f${((r*3+l*5+side*2)%8)+1}" cx="${X+o}" cy="${7+12*r}" r="4.2"/>`;}});
   });
   let slots='';
-  for(let i=0;i<5;i++){slots+=`<rect class="slot" x="${31+i*58}" y="250" width="46" height="46" rx="10"/>`;}
-  slots+=boxSVG(34,254,40,38,2,3)+boxSVG(92,254,40,38,6,5);
+  for(let i=0;i<4;i++){slots+=`<rect class="slot" x="${51+i*64}" y="250" width="46" height="46" rx="10"/>`;}
+  slots+=boxSVG(54,254,40,38,2,3)+boxSVG(118,254,40,38,6,5);
   const cols=[[1,4],[5,6],[3,2],[8,5],[7,3],[2,6],[4,4],[1,2],[6,5],[3,3],[5,4],[7,6]];
   let front='',rest='';
   cols.forEach((b,i)=>{
@@ -399,7 +399,7 @@ function fieldSVG(label){
   return `<svg viewBox="0 0 340 466" role="img" aria-label="${esc(label)}">
     <g class="part part-A">${enter}${pin(62,24,'A')}${pin(278,24,'A')}</g>
     <g class="part part-B">${ring}${pin(170,144,'B')}</g>
-    <g class="part part-C">${slots}${pin(14,273,'C')}</g>
+    <g class="part part-C">${slots}${pin(26,273,'C')}</g>
     <g class="part part-D">${front}${pin(26,340,'D')}</g>
     <g class="part part-E">${rest}${pin(26,409,'E')}</g>
   </svg>`;
@@ -481,6 +481,14 @@ function view(l){
       t(`Once in a slot, the box looks for items of its color and pulls them in.`,`Khi đã vào ô, hộp bắt đầu tìm vật phẩm cùng màu và hút vào.`),
       t(`The capacity number on top of the box counts down as the box fills.`,`Con số sức chứa trên hộp giảm dần mỗi khi có vật phẩm vào hộp.`),
       t(`When the box is full, it clears from the level and frees its slot for the next box.`,`Khi đầy, hộp biến mất khỏi màn chơi và nhường ô cho hộp tiếp theo.`)
+    ]))+
+    ent(nm('Reward ads slot (RV Slot)','Ô quảng cáo thưởng'),ul([
+      t(`A level normally has 4 slots by default. Some special levels are an exception.`,
+        `Thông thường mỗi màn có sẵn 4 ô, trừ một số màn đặc biệt.`),
+      t(`RV Slots let the player watch a rewarded ad to earn an extra slot in the level.`,
+        `Ô quảng cáo thưởng (RV Slot) cho phép người chơi xem quảng cáo có thưởng để nhận thêm một ô trong màn chơi.`),
+      t(`RV Slots can raise the number of available slots to a maximum of 6 per level.`,
+        `Ô quảng cáo thưởng có thể tăng số ô dùng được lên tối đa 6 ô mỗi màn.`)
     ]));
 
   B['elements-mechanics']=
@@ -606,10 +614,10 @@ function view(l){
   B['element-tutorial']=table(t('Element tutorial','Hướng dẫn yếu tố đặc biệt'),
     [t('Element','Yếu tố'),t('Popup text','Nội dung popup'),t('Unlocks at level','Mở ở màn')],
     [
-      [N.hidden,popup('Move the box to the top<br>to reveal its color.','Đưa hộp lên đầu hàng chờ<br>để hiện màu.'),lvl(7)],
-      [N.locked,popup('Send boxes into the slots<br>to unlock the items.','Đưa hộp vào các ô<br>để mở khóa vật phẩm.'),lvl(12)],
-      [N.linked,popup('Move both boxes to the top<br>to break the link.','Đưa cả hai hộp lên đầu hàng chờ<br>để gỡ liên kết.'),lvl(17)],
-      [N.door,popup('Send boxes into the slots<br>to break the door.','Đưa hộp vào các ô<br>để phá cửa.'),lvl(22)]
+      [N.hidden,popup('Move box to the top<br>to reveal its color.','Đưa hộp lên đầu hàng chờ<br>để hiện màu.'),lvl(7)],
+      [N.locked,popup('Send boxes to the slots<br>to unlock the item.','Đưa hộp lên các ô<br>để mở khóa vật phẩm.'),lvl(12)],
+      [N.linked,popup('Move both to the top<br>to break the link.','Đưa cả hai lên đầu hàng chờ<br>để gỡ liên kết.'),lvl(17)],
+      [N.door,popup('Send boxes to the slots<br>to break the door.','Đưa hộp lên các ô<br>để phá cửa.'),lvl(22)]
     ]);
 
   B['booster-tutorial']=table(t('Booster tutorial','Hướng dẫn công cụ hỗ trợ'),
@@ -741,8 +749,8 @@ function view(l){
     <figure class="field${paused?' paused':''}" id="field">
       <div class="field-box">${fieldSVG(t('Sketch of the play screen: Enter Paths on top (two in this example) lead into a looping conveyor, with a row of slots and queues of boxes below.','Hình minh họa màn chơi: các Đường vào phía trên (ví dụ này có hai đường) dẫn vào băng chuyền chạy vòng, bên dưới là hàng ô và các hàng chờ.'))}</div>
       <div class="field-foot"><button type="button" class="pause" id="pauseBtn">${paused?ui.play:ui.pause}</button></div>
-      <figcaption>${t(`Simplified sketch. The number of Enter Paths, slots and queues and the shape of the conveyor are examples, not final values.`,
-                      `Hình minh họa đơn giản. Số Đường vào, số ô, số hàng chờ và hình dáng băng chuyền chỉ là ví dụ, chưa phải thông số chính thức.`)}</figcaption>
+      <figcaption>${t(`Simplified sketch. The number of Enter Paths and queues and the shape of the conveyor are examples, not final values.`,
+                      `Hình minh họa đơn giản. Số Đường vào, số hàng chờ và hình dáng băng chuyền chỉ là ví dụ, chưa phải thông số chính thức.`)}</figcaption>
     </figure>
   </div>`;
 
