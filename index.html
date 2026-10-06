@@ -491,13 +491,15 @@ function view(l){
         `Người chơi cũng có thể dùng công cụ Bàn tay hoặc Loại bỏ để mở hoặc dọn hộp sớm, không cần đưa hộp lên đầu hàng chờ trước.`)
     ]),unlock(7))+
     ent(N.locked,ul([
-      t(`A Locked Item shows a lock number on top and hides its true color.`,`Vật phẩm bị khóa hiện một con số phía trên và che đi màu thật.`),
-      t(`Boxes cannot pick it up until it unlocks.`,`Khi chưa mở khóa, hộp không thể nhặt vật phẩm này.`),
+      t(`A Locked Item shows a lock number on top. Its color stays visible.`,`Vật phẩm bị khóa hiện một con số phía trên. Màu của vật phẩm vẫn nhìn thấy được.`),
+      t(`The lock only stops boxes from picking the item up. Boxes cannot pick it up until it unlocks.`,`Khóa chỉ ngăn hộp nhặt vật phẩm này. Khi chưa mở khóa, hộp không thể nhặt nó.`),
       t(`It unlocks after a set number of boxes have been sent to the slots.`,`Vật phẩm mở khóa sau khi người chơi đưa đủ số hộp lên ô.`),
       t(`Each box sent to a slot lowers the number by 1. The countdown keeps going even while the item is off-screen.`,
         `Mỗi hộp được đưa lên ô thì con số giảm đi 1. Con số vẫn tiếp tục giảm kể cả khi vật phẩm không nằm trong màn hình.`),
       t(`Until it unlocks, it moves along the conveyor like a normal item. It just can't be picked up.`,
-        `Trước khi mở khóa, vật phẩm vẫn chạy trên băng chuyền như bình thường, chỉ là chưa nhặt được.`)
+        `Trước khi mở khóa, vật phẩm vẫn chạy trên băng chuyền như bình thường, chỉ là chưa nhặt được.`),
+      t(`If the player has already sent up every box and Locked Items still remain, all of them unlock.`,
+        `Nếu người chơi đã đưa hết các hộp lên mà vẫn còn Vật phẩm bị khóa, tất cả sẽ được mở khóa.`)
     ]),unlock(12))+
     ent(N.linked,ul([
       t(`Linked Boxes are two boxes chained together in the queues.`,`Hộp liên kết là hai hộp được nối với nhau trong các hàng chờ.`),
@@ -509,6 +511,10 @@ function view(l){
     ent(N.door,ul([
       t(`A Block Door is a blocker on an Enter Path. It splits the line of items into smaller groups.`,
         `Cửa chặn là vật cản nằm trên Đường vào, chia hàng vật phẩm thành từng nhóm nhỏ.`),
+      t(`While it is on the Enter Path, the door moves along with the items.`,
+        `Khi còn ở trên Đường vào, cửa di chuyển cùng với các vật phẩm.`),
+      t(`When the door reaches the center conveyor, it gets stuck at the entrance and keeps the items behind it from filling the center conveyor.`,
+        `Khi tới băng chuyền trung tâm, cửa bị kẹt lại ở lối vào và chặn không cho các vật phẩm phía sau vào lấp băng chuyền trung tâm.`),
       t(`Each door shows a counter on top: how many boxes must be sent to the slots to break it.`,
         `Trên mỗi cửa có một con số cho biết cần đưa bao nhiêu hộp lên ô thì cửa mới vỡ.`),
       t(`Each box sent to a slot lowers the counter by 1. The countdown keeps going even while the door is off-screen.`,
@@ -547,8 +553,8 @@ function view(l){
         t(`Shuffle the remaining boxes randomly.`,`Xáo ngẫu nhiên các hộp còn lại.`)
       ]),
       withEl+':'+ul([
-        t(`Linked Box: when shuffling, it stays in its original queue and never moves to another queue. If it is picked in step 2, it moves to the top of its own queue.`,
-          `Hộp liên kết: khi xáo trộn, hộp luôn nằm lại đúng hàng chờ ban đầu của nó, không chuyển sang hàng chờ khác. Nếu được chọn ở bước 2, hộp lên đầu hàng chờ của chính nó.`)
+        t(`Linked Box: when shuffling, it stays in its original queue and never moves to another queue. If it is picked in step 2, it moves to the top of its own queue and the link breaks.`,
+          `Hộp liên kết: khi xáo trộn, hộp luôn nằm lại đúng hàng chờ ban đầu của nó, không chuyển sang hàng chờ khác. Nếu được chọn ở bước 2, hộp lên đầu hàng chờ của chính nó và liên kết được gỡ.`)
       ])
     ]),unlockB(8))+
     ent(N.remove,ul([
