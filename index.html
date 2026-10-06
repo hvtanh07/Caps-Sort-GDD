@@ -43,7 +43,7 @@ button{font:inherit}
 
 /* ---------- layout ---------- */
 .app{display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr)}
-main{container-type:inline-size;padding:48px clamp(20px,5vw,64px) 30vh;max-width:1040px;min-width:0}
+main{container-type:inline-size;padding:48px clamp(20px,5vw,64px) 30vh;width:100%;max-width:1040px;min-width:0;margin-inline:auto}
 
 /* ---------- rail (contents + search) ---------- */
 .rail{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;z-index:30;
@@ -178,6 +178,8 @@ ul.bl ul.bl>li::before{background:none;border:1.5px solid var(--muted)}
 ol.steps{margin:.5em 0 .3em;padding-left:1.5em;max-width:66ch}
 ol.steps>li{margin:0 0 .35em;padding-left:.2em}
 ol.steps>li::marker{font-weight:700;font-family:var(--display)}
+ol.steps ol.steps{list-style-type:lower-alpha;margin:.35em 0 .35em}
+ol.steps .after{display:block;margin-top:.1em}
 ul.params>li{margin:0 0 .7em;max-width:68ch}
 ul.params>li>b{display:block;font-weight:600}
 ul.params>li>span{display:block}
@@ -526,21 +528,30 @@ function view(l){
     ent(N.hand,ul([
       t(`Lets the player pick any box in the queues and send it up to an empty slot, without waiting for it to reach the top of its queue.`,
         `Cho phép người chơi chọn bất kỳ hộp nào trong các hàng chờ để đưa lên ô trống, không cần chờ hộp lên tới đầu hàng chờ.`),
-      pickBoth,
+      t(`Only boxes in the queues can be picked, not boxes that are already in the slots.`,
+        `Chỉ chọn được hộp trong hàng chờ, không chọn được hộp đang nằm trong ô.`),
       withEl+':'+ul([hbReveal,lbBreak])
     ]),unlockB(5))+
     ent(N.shuffle,ul([
       t(`Shuffles the boxes in the queues. Before shuffling, the game does the following in order:`,
         `Xáo lại thứ tự các hộp trong các hàng chờ. Trước khi xáo, trò chơi làm lần lượt các bước sau:`)+ol([
-        t(`Pick up to 3 colors from the items on the center conveyor. If the conveyor holds fewer than 3 colors, pick all of them.`,
-          `Chọn tối đa 3 màu từ các vật phẩm đang có trên băng chuyền trung tâm. Nếu băng chuyền có ít hơn 3 màu thì chọn hết.`),
-        t(`Move up to 3 boxes of those colors to the top of the queues. The boxes with the largest capacity are picked; if several boxes tie, the game picks among them at random.`,
-          `Đưa tối đa 3 hộp thuộc các màu đó lên đầu hàng chờ. Trò chơi chọn các hộp có sức chứa lớn nhất; nếu nhiều hộp bằng nhau thì chọn ngẫu nhiên trong số đó.`),
+        t(`Pick up to 3 colors from the items on the center conveyor, in this order of priority:`,
+          `Chọn tối đa 3 màu từ các vật phẩm đang có trên băng chuyền trung tâm, theo thứ tự ưu tiên:`)+ol([
+            t(`Colors of normal items, starting with the color that has the most items on the center conveyor.`,
+              `Màu của vật phẩm thường, bắt đầu từ màu có nhiều vật phẩm nhất trên băng chuyền trung tâm.`),
+            t(`Colors of Locked Items.`,`Màu của Vật phẩm bị khóa.`)
+          ])+`<span class="after">${t(`If the conveyor holds fewer than 3 colors, pick all of them.`,`Nếu băng chuyền có ít hơn 3 màu thì chọn hết.`)}</span>`,
+        t(`Move up to 3 boxes of those colors to the top of the queues, in this order of priority:`,
+          `Đưa tối đa 3 hộp thuộc các màu đó lên đầu hàng chờ, theo thứ tự ưu tiên:`)+ol([
+            t(`Normal box`,`Hộp thường`),
+            t(`Hidden Box`,`Hộp ẩn`),
+            t(`Linked Box`,`Hộp liên kết`)
+          ])+`<span class="after">${t(`Among boxes of the same kind, the one with the largest capacity goes first. Boxes with the same capacity are picked at random.`,`Trong cùng một loại hộp, ưu tiên hộp có sức chứa lớn nhất. Nếu cùng sức chứa thì chọn ngẫu nhiên.`)}</span>`,
         t(`Shuffle the remaining boxes randomly.`,`Xáo ngẫu nhiên các hộp còn lại.`)
       ]),
       withEl+':'+ul([
-        t(`When choosing which boxes move to the top, the order of priority is normal box → Hidden Box → Linked Box.`,
-          `Khi chọn hộp để đưa lên đầu hàng chờ, thứ tự ưu tiên là hộp thường → Hộp ẩn → Hộp liên kết.`)
+        t(`Linked Box: when shuffling, it stays in its original queue and never moves to another queue. If it is picked in step 2, it moves to the top of its own queue.`,
+          `Hộp liên kết: khi xáo trộn, hộp luôn nằm lại đúng hàng chờ ban đầu của nó, không chuyển sang hàng chờ khác. Nếu được chọn ở bước 2, hộp lên đầu hàng chờ của chính nó.`)
       ])
     ]),unlockB(8))+
     ent(N.remove,ul([
