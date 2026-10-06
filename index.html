@@ -443,8 +443,8 @@ function view(l){
   /* ===== 1. Game mechanics ===== */
   B['gameplay-overview']=
     ent(t('How it plays','Cách chơi'),ul([
-      t(`The player solves a level by sending boxes from the queues up to the slots.`,
-        `Người chơi giải màn bằng cách đưa các hộp từ các hàng chờ lên các ô phía trên.`),
+      t(`The player solves a level by sending boxes from the front row up to the slots.`,
+        `Người chơi giải màn bằng cách đưa các hộp từ hàng đầu lên các ô phía trên.`),
       t(`A box sitting in a slot pulls matching items off the circling conveyor. Once it is full, it clears from the level.`,
         `Hộp nằm trong ô sẽ hút các vật phẩm cùng màu từ băng chuyền đang chạy vòng. Khi đầy, hộp biến mất khỏi màn chơi.`)
     ]))+
@@ -454,8 +454,8 @@ function view(l){
                          `Mọi ô đều đã có hộp, không hộp nào trong ô nhận thêm được vật phẩm, và người chơi từ chối hồi sinh.`)]
     ]))+
     ent(nm('Revive','Hồi sinh'),ul([
-      t(`When the player revives, the 2 rightmost boxes in the slots each get a free Remove. This does not use up the player's Remove boosters, and the player does not need to own any.`,
-        `Khi người chơi hồi sinh, 2 hộp ngoài cùng bên phải trong các ô được dùng công cụ Loại bỏ miễn phí. Lượt này không trừ vào số công cụ người chơi đang có, và người chơi cũng không cần có sẵn công cụ Loại bỏ.`),
+      t(`When the player revives, the 2 boxes in the slots with the biggest capacity each get a free Remove. This does not use up the player's Remove boosters, and the player does not need to own any.`,
+        `Khi người chơi hồi sinh, 2 hộp có sức chứa lớn nhất trong các ô được dùng công cụ Loại bỏ miễn phí. Lượt này không trừ vào số công cụ người chơi đang có, và người chơi cũng không cần có sẵn công cụ Loại bỏ.`),
       t(`Once the Remove has finished, the game continues as normal.`,
         `Sau khi công cụ chạy xong, trò chơi tiếp tục như bình thường.`)
     ]));
