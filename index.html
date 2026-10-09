@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!doctype html>
 <html lang="en" data-lang="en">
 <head>
@@ -413,7 +414,8 @@ const SECTIONS=[
     {id:'booster-object-concept',n:'3.4',en:'Booster objects',vi:'Đối tượng công cụ hỗ trợ',wip:true}]},
   {id:'sfx--haptics',n:'4',c:4,en:'SFX & haptics',vi:'Âm thanh & rung'},
   {id:'remote-config',n:'5',c:5,en:'Remote config',vi:'Cấu hình từ xa',wip:true},
-  {id:'level-config',n:'6',c:6,en:'Level config',vi:'Cấu hình màn chơi',wip:true}
+  {id:'level-config',n:'6',c:6,en:'Level config',vi:'Cấu hình màn chơi',wip:true},
+  {id:'change-note',n:'7',c:7,en:'Change note',vi:'Ghi chú thay đổi'}
 ];
 const SEC={};
 SECTIONS.forEach(s=>{SEC[s.id]=s;(s.subs||[]).forEach(u=>{SEC[u.id]=u;});});
@@ -489,6 +491,7 @@ function view(l){
   const popup=(text,v)=>`<span class="popup" lang="en">${text}</span>${vi?`<span class="gloss">${v}</span>`:''}`;
   const dash=`<span class="dash">–</span>`;
   const lvl=n=>`<span class="lvl">${n}</span>`;
+  const tbd=`<span class="dash">${t('TBD','Chưa chốt')}</span>`;
   const wip=`<span class="wip">${ui.wip}</span>`;
   const unlock=n=>t(`Unlocks at level ${n}`,`Mở ở màn ${n}`);
   const unlockB=n=>[unlock(n),t(`3 free`,`Tặng 3 lượt`)];
@@ -498,11 +501,12 @@ function view(l){
   const N={
     hidden:nm('Hidden Box','Hộp ẩn'),locked:nm('Locked Item','Vật phẩm bị khóa'),
     linked:nm('Linked Box','Hộp liên kết'),door:nm('Block Door','Cửa chặn'),
-    hand:nm('Hand','Bàn tay'),shuffle:nm('Shuffle','Xáo trộn'),remove:nm('Remove','Loại bỏ')
+    lockedBox:nm('Locked Box','Hộp bị khóa'),blockQueue:nm('Block Queue','Hàng chờ bị chặn'),
+    hand:nm('Hand','Bàn tay'),shuffle:nm('Shuffle','Xáo trộn'),magnet:nm('Magnet','Nam châm')
   };
   const P={ /* plain names for running text and tables */
-    hidden:t('Hidden Box','Hộp ẩn'),locked:t('Locked Item','Vật phẩm bị khóa'),linked:t('Linked Box','Hộp liên kết'),door:t('Block Door','Cửa chặn'),
-    hand:t('Hand','Bàn tay'),shuffle:t('Shuffle','Xáo trộn'),remove:t('Remove','Loại bỏ')
+    hidden:t('Hidden Box','Hộp ẩn'),locked:t('Locked Item','Vật phẩm bị khóa'),linked:t('Linked Box','Hộp liên kết'),door:t('Block Door','Cửa chặn'),lockedBox:t('Locked Box','Hộp bị khóa'),blockQueue:t('Block Queue','Hàng chờ bị chặn'),
+    hand:t('Hand','Bàn tay'),shuffle:t('Shuffle','Xáo trộn'),magnet:t('Magnet','Nam châm')
   };
   const withEl=t('With elements','Khi gặp yếu tố đặc biệt');
 
@@ -522,9 +526,9 @@ function view(l){
                          `Mọi ô đều đã có hộp, không hộp nào trong ô nhận thêm được vật phẩm, và người chơi từ chối hồi sinh.`)]
     ]))+
     ent(nm('Revive','Hồi sinh'),ul([
-      t(`When the player revives, the 2 boxes in the slots with the biggest capacity each get a free Remove. This does not use up the player's Remove boosters, and the player does not need to own any.`,
-        `Khi người chơi hồi sinh, 2 hộp có sức chứa lớn nhất trong các ô được dùng công cụ Loại bỏ miễn phí. Lượt này không trừ vào số công cụ người chơi đang có, và người chơi cũng không cần có sẵn công cụ Loại bỏ.`),
-      t(`Once the Remove has finished, the game continues as normal.`,
+      t(`When the player revives, the 2 boxes in the slots with the biggest capacity each get a free Magnet. This does not use up the player's Magnet boosters, and the player does not need to own any.`,
+        `Khi người chơi hồi sinh, 2 hộp có sức chứa lớn nhất trong các ô được dùng công cụ Nam châm miễn phí. Lượt này không trừ vào số công cụ người chơi đang có, và người chơi cũng không cần có sẵn công cụ Nam châm.`),
+      t(`Once the Magnet has finished, the game continues as normal.`,
         `Sau khi công cụ chạy xong, trò chơi tiếp tục như bình thường.`)
     ]));
 
@@ -654,12 +658,14 @@ function view(l){
           `Ô quảng cáo thưởng có thể tăng số ô dùng được lên tối đa 6 ô mỗi màn.`)
       ]));
 
+  const fsSee=`<a href="#lock-fail-safe">${t('See “Fail-safe for locks and blocks”.','Xem mục “Cơ chế chống kẹt”.')}</a>`;
+  const fsLine=(en,vi)=>`<b>${t('Fail-safe','Chống kẹt')}:</b> ${t(en,vi)} ${fsSee}`;
   B['elements-mechanics']=
     ent(N.hidden,ul([
       t(`A Hidden Box hides its real color and capacity number.`,`Hộp ẩn che đi màu thật và sức chứa của nó.`),
       t(`To reveal them, the player has to move the box to the top of its queue.`,`Muốn biết màu và sức chứa, người chơi phải đưa hộp lên đầu hàng chờ.`),
-      t(`The Hand and Remove boosters can also reveal or clear it early, without moving it to the top first.`,
-        `Người chơi cũng có thể dùng công cụ Bàn tay hoặc Loại bỏ để mở hoặc dọn hộp sớm, không cần đưa hộp lên đầu hàng chờ trước.`)
+      t(`The Hand booster can also reveal and clear it early, without moving it to the top first.`,
+        `Người chơi cũng có thể dùng công cụ Bàn tay để mở và dọn hộp sớm, không cần đưa hộp lên đầu hàng chờ trước.`)
     ]),unlock(7))+
     ent(N.locked,ul([
       t(`A Locked Item shows a lock number on top. Its color stays visible.`,`Vật phẩm bị khóa hiện một con số phía trên. Màu của vật phẩm vẫn nhìn thấy được.`),
@@ -669,9 +675,9 @@ function view(l){
         `Mỗi hộp được đưa lên ô thì con số giảm đi 1. Con số vẫn tiếp tục giảm kể cả khi vật phẩm không nằm trong màn hình.`),
       t(`Until it unlocks, it moves along the conveyor like a normal item. It just can't be picked up.`,
         `Trước khi mở khóa, vật phẩm vẫn chạy trên băng chuyền như bình thường, chỉ là chưa nhặt được.`),
-      t(`If the player has already sent up every box and Locked Items still remain, all of them unlock.`,
-        `Nếu người chơi đã đưa hết các hộp lên mà vẫn còn Vật phẩm bị khóa, tất cả sẽ được mở khóa.`)
-    ]),unlock(12))+
+      fsLine(`if the player has already sent up every box and Locked Items still remain, the number can no longer drop. All locks are removed.`,
+             `nếu người chơi đã đưa hết các hộp lên mà vẫn còn Vật phẩm bị khóa, con số không thể giảm tiếp. Khi đó mọi khóa được gỡ.`)
+    ]),unlock(27))+
     ent(N.linked,ul([
       t(`Linked Boxes are two boxes chained together in the queues.`,`Hộp liên kết là hai hộp được nối với nhau trong các hàng chờ.`),
       t(`The two boxes must sit in two different queues.`,`Hai hộp phải nằm ở hai hàng chờ khác nhau.`),
@@ -680,31 +686,74 @@ function view(l){
       t(`Once unlinked, they can be sent to empty slots like normal boxes.`,`Gỡ xong, hai hộp được đưa lên ô trống như hộp thường.`)
     ]),unlock(17))+
     ent(N.door,ul([
-      t(`A Block Door is a blocker on an Enter Path. It splits the line of items into smaller groups.`,
-        `Cửa chặn là vật cản nằm trên Đường vào, chia hàng vật phẩm thành từng nhóm nhỏ.`),
-      t(`While it is on the Enter Path, the door moves along with the items.`,
-        `Khi còn ở trên Đường vào, cửa di chuyển cùng với các vật phẩm.`),
-      t(`When the door reaches the center conveyor, it gets stuck at the entrance and keeps the items behind it from filling the center conveyor.`,
-        `Khi tới băng chuyền trung tâm, cửa bị kẹt lại ở lối vào và chặn không cho các vật phẩm phía sau vào lấp băng chuyền trung tâm.`),
-      t(`Each door shows a counter on top: how many boxes must be sent to the slots to break it.`,
-        `Trên mỗi cửa có một con số cho biết cần đưa bao nhiêu hộp lên ô thì cửa mới vỡ.`),
-      t(`Each box sent to a slot lowers the counter by 1. The countdown keeps going even while the door is off-screen.`,
-        `Mỗi hộp được đưa lên ô thì con số giảm đi 1. Con số vẫn tiếp tục giảm kể cả khi cửa không nằm trong màn hình.`),
-      t(`When the door breaks, the items behind it move on and fill the empty spots on the center conveyor.`,
-        `Khi cửa vỡ, các vật phẩm bị chặn phía sau tiếp tục chạy vào lấp chỗ trống trên băng chuyền trung tâm.`)
-    ]),unlock(22));
+      t(`A Block Door is a blockage at the gate of every Enter Path, with a countdown.`,
+        `Cửa chặn là vật cản đặt ở cổng của mọi Đường vào, kèm một con số đếm ngược.`),
+      t(`While a door is shut, the items behind it cannot enter the center conveyor.`,
+        `Khi cửa đang đóng, các vật phẩm phía sau không vào được băng chuyền trung tâm.`),
+      t(`The countdown counts the boxes sent to the slots: each box sent lowers it by 1.`,
+        `Con số đếm theo số hộp được đưa lên ô: mỗi hộp đưa lên thì con số giảm đi 1.`),
+      t(`When the countdown reaches 0, one door opens and the other door shuts.`,
+        `Khi con số về 0, một cửa mở ra và cửa còn lại đóng lại.`),
+      t(`Which doors are open and which are shut is set in the level config.`,
+        `Cửa nào mở và cửa nào đóng được thiết lập trong cấu hình màn chơi.`),
+      t(`When a door opens, the items behind it move on and fill the empty spots on the center conveyor.`,
+        `Khi cửa mở, các vật phẩm phía sau tiếp tục chạy vào lấp chỗ trống trên băng chuyền trung tâm.`),
+      fsLine(`if every box has been sent up and a door is still shut, the countdown can no longer move. All locks are removed and every door opens.`,
+             `nếu mọi hộp đã được đưa lên hết mà vẫn còn cửa đang đóng, con số không thể giảm tiếp. Khi đó mọi khóa được gỡ và tất cả cửa mở ra.`)
+    ]),unlock(22))+
+    ent(N.lockedBox,ul([
+      t(`A Locked Box is a box in the queues that is locked in the same way as a Locked Item. It shows a lock number on top.`,
+        `Hộp bị khóa là hộp trong hàng chờ bị khóa giống như Vật phẩm bị khóa. Trên hộp hiện một con số.`),
+      t(`While it is locked, it cannot be sent up to the slots, even when it reaches the front row.`,
+        `Khi còn bị khóa, hộp không thể được đưa lên ô, kể cả khi đã lên tới hàng đầu.`),
+      t(`The lock works like the Locked Item's: each box sent to a slot lowers the number by 1.`,
+        `Khóa hoạt động giống Vật phẩm bị khóa: mỗi hộp được đưa lên ô thì con số giảm đi 1.`),
+      t(`When the number reaches 0, the box unlocks and can be sent up like a normal box.`,
+        `Khi con số về 0, hộp mở khóa và được đưa lên ô như hộp thường.`),
+      fsLine(`if boxes are still waiting in the queues but none in the front row can be sent up (for example, every front-row box is a Locked Box), the numbers can no longer drop. All locks are removed.`,
+             `nếu hàng chờ vẫn còn hộp nhưng không hộp nào ở hàng đầu đưa lên được (ví dụ mọi hộp ở hàng đầu đều là Hộp bị khóa), các con số không thể giảm tiếp. Khi đó mọi khóa được gỡ.`)
+    ]),unlock(12))+
+    ent(N.blockQueue,ul([
+      t(`A Block Queue locks a whole queue. While a queue is blocked, none of its boxes can be sent up.`,
+        `Hàng chờ bị chặn khóa cả một hàng chờ. Khi hàng chờ đang bị chặn, không hộp nào trong hàng đó được đưa lên.`),
+      t(`It works like the Block Door, with a countdown.`,
+        `Cơ chế giống Cửa chặn, kèm một con số đếm ngược.`),
+      t(`The countdown counts the boxes sent up from the other queues: each box sent lowers it by 1.`,
+        `Con số đếm theo số hộp được đưa lên từ các hàng chờ khác: mỗi hộp đưa lên thì con số giảm đi 1.`),
+      t(`When the countdown reaches 0, the blocked queue unlocks and the block moves on to another queue.`,
+        `Khi con số về 0, hàng chờ bị chặn được mở và một hàng chờ khác bắt đầu bị chặn.`),
+      fsLine(`if no other queue can send a box (the other queues are empty, or their front-row boxes cannot be sent), the countdown can no longer move. All locks are removed and no queue stays blocked.`,
+             `nếu không hàng chờ nào khác đưa được hộp lên (các hàng khác đã hết hộp, hoặc hộp ở hàng đầu của chúng không đưa lên được), con số không thể giảm tiếp. Khi đó mọi khóa được gỡ và không còn hàng chờ nào bị chặn.`)
+    ]),unlock(32))+
+    ent(nm('Fail-safe for locks and blocks','Cơ chế chống kẹt'),ul([
+      t(`Locked Item, Locked Box, Block Door and Block Queue all count down on boxes sent to the slots. If no more boxes can be sent, their countdowns can never reach 0 and the level would be stuck.`,
+        `Vật phẩm bị khóa, Hộp bị khóa, Cửa chặn và Hàng chờ bị chặn đều đếm theo số hộp được đưa lên ô. Nếu không còn đưa được hộp nào lên, các con số sẽ không bao giờ về 0 và màn chơi bị kẹt.`),
+      t(`The game treats these two cases as a stuck:`,`Trò chơi coi hai trường hợp sau là bị kẹt:`)+ol([
+        t(`Boxes are still waiting in the queues, but no box in the front row can be sent up, and at least one Locked Box is still locked or one queue is still blocked.`,
+          `Hàng chờ vẫn còn hộp nhưng không hộp nào ở hàng đầu đưa lên được, trong khi vẫn còn Hộp bị khóa chưa mở hoặc còn hàng chờ đang bị chặn.`),
+        t(`Every box has been sent up, but Locked Items still remain or a Block Door is still shut.`,
+          `Mọi hộp đã được đưa lên hết nhưng vẫn còn Vật phẩm bị khóa hoặc còn Cửa chặn đang đóng.`)
+      ]),
+      t(`When a stuck happens, all locks and blocks in the level are removed at once: every Locked Item and Locked Box unlocks, every Block Door opens, and no queue stays blocked.`,
+        `Khi bị kẹt, mọi khóa và vật chặn trong màn được gỡ cùng lúc: tất cả Vật phẩm bị khóa và Hộp bị khóa mở khóa, mọi Cửa chặn mở ra, và không còn hàng chờ nào bị chặn.`),
+      t(`They stay removed for the rest of the level.`,`Chúng không xuất hiện lại cho tới hết màn.`),
+      t(`Full slots are not a stuck. If every slot is taken and no box in the slots can take another item, the normal lose and revive rules apply.`,
+        `Hết ô trống không tính là bị kẹt. Nếu mọi ô đều đã có hộp và không hộp nào trong ô nhận thêm được vật phẩm, luật thua và hồi sinh vẫn áp dụng như bình thường.`)
+    ])).replace('<div class="ent">','<div class="ent" id="lock-fail-safe">');
 
   const hbReveal=t(`Hidden Box: can be selected. It reveals its color and capacity immediately.`,`Hộp ẩn: chọn được. Hộp hiện ngay màu và sức chứa.`);
   const lbBreak=t(`Linked Box: can be selected. The link breaks immediately.`,`Hộp liên kết: chọn được. Liên kết được gỡ ngay.`);
-  const pickBoth=t(`The player can pick a box in the queues or a box that is already in the slots.`,
-                   `Người chơi có thể chọn hộp trong hàng chờ hoặc hộp đang nằm trong ô.`);
+  const itemOrder=t(`Item order: items on the center conveyor are taken first, then items on the Enter Paths from closest to furthest, and Locked Items last. A Locked Item that gets picked unlocks immediately.`,
+                    `Thứ tự lấy vật phẩm: lấy trên băng chuyền trung tâm trước, sau đó tới Đường vào, từ gần đến xa, cuối cùng mới tới Vật phẩm bị khóa. Vật phẩm bị khóa được chọn sẽ mở khóa ngay lập tức.`);
   B['booster-mechanics']=
     ent(N.hand,ul([
-      t(`Lets the player pick any box in the queues and send it up to an empty slot, without waiting for it to reach the top of its queue.`,
-        `Cho phép người chơi chọn bất kỳ hộp nào trong các hàng chờ để đưa lên ô trống, không cần chờ hộp lên tới đầu hàng chờ.`),
+      t(`Lets the player pick any box in the queues and clear it immediately, without waiting for it to reach the top of its queue.`,
+        `Cho phép người chơi chọn bất kỳ hộp nào trong các hàng chờ để dọn hộp đó ngay lập tức, không cần chờ hộp lên tới đầu hàng chờ.`),
       t(`Only boxes in the queues can be picked, not boxes that are already in the slots.`,
         `Chỉ chọn được hộp trong hàng chờ, không chọn được hộp đang nằm trong ô.`),
-      withEl+':'+ul([hbReveal,lbBreak])
+      t(`When triggered, the chosen box lifts up, moves to the front, then pulls in matching-color items and packs them. It takes exactly as many items as it needs to be full.`,
+        `Khi dùng, hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút các vật phẩm cùng màu vào. Số vật phẩm hút vào bằng đúng số còn thiếu để hộp đầy.`),
+      withEl+':'+ul([hbReveal,lbBreak,itemOrder])
     ]),unlockB(5))+
     ent(N.shuffle,ul([
       t(`Shuffles the boxes in the queues. Before shuffling, the game does the following in order:`,
@@ -728,15 +777,17 @@ function view(l){
           `Hộp liên kết: khi xáo trộn, hộp luôn nằm lại đúng hàng chờ ban đầu của nó, không chuyển sang hàng chờ khác. Nếu được chọn ở bước 2, hộp lên đầu hàng chờ của chính nó và liên kết được gỡ.`)
       ])
     ]),unlockB(8))+
-    ent(N.remove,ul([
-      t(`Lets the player pick any box and clear it immediately.`,
-        `Cho phép người chơi chọn bất kỳ hộp nào để dọn hộp đó ngay lập tức.`),
-      pickBoth,
-      t(`The chosen box lifts up, moves to the front, then pulls in matching-color items and packs them. It takes exactly as many items as it needs to be full.`,
-        `Hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút các vật phẩm cùng màu vào. Số vật phẩm hút vào bằng đúng số còn thiếu để hộp đầy.`),
-      withEl+':'+ul([hbReveal,lbBreak,
-        t(`Item order: items on the center conveyor are taken first, then items on the Enter Paths from closest to furthest, and Locked Items last. A Locked Item that gets picked unlocks immediately.`,
-          `Thứ tự lấy vật phẩm: lấy trên băng chuyền trung tâm trước, sau đó tới Đường vào, từ gần đến xa, cuối cùng mới tới Vật phẩm bị khóa. Vật phẩm bị khóa được chọn sẽ mở khóa ngay lập tức.`)
+    ent(N.magnet,ul([
+      t(`Lets the player pick any box in the slots and remove it immediately.`,
+        `Cho phép người chơi chọn bất kỳ hộp nào đang nằm trong ô để dọn hộp đó ngay lập tức.`),
+      t(`Only boxes in the slots can be picked, not boxes in the queues.`,
+        `Chỉ chọn được hộp đang nằm trong ô, không chọn được hộp trong hàng chờ.`),
+      t(`When triggered, the chosen box pulls in matching-color items and packs them. It takes exactly as many items as it still needs to be full, then clears and frees its slot.`,
+        `Khi dùng, hộp được chọn hút các vật phẩm cùng màu vào, lấy đúng số còn thiếu để hộp đầy. Sau đó hộp biến mất và nhường lại ô.`),
+      withEl+':'+ul([
+        itemOrder,
+        t(`Hidden Box and Linked Box: not affected. A box that is already in the slots has revealed its color and broken its link.`,
+          `Hộp ẩn và Hộp liên kết: không bị ảnh hưởng, vì hộp đã lên ô thì đã hiện màu và đã gỡ liên kết.`)
       ])
     ]),unlockB(10));
 
@@ -778,9 +829,11 @@ function view(l){
     [t('Element','Yếu tố'),t('Popup text','Nội dung popup'),t('Unlocks at level','Mở ở màn')],
     [
       [N.hidden,popup('Move box to the top<br>to reveal its color.','Đưa hộp lên đầu hàng chờ<br>để hiện màu.'),lvl(7)],
-      [N.locked,popup('Send boxes to the slots<br>to unlock the item.','Đưa hộp lên các ô<br>để mở khóa vật phẩm.'),lvl(12)],
+      [N.lockedBox,popup('To unlock locked boxes,<br>send boxes into the slots','Để mở khóa hộp bị khóa,<br>hãy đưa hộp vào các ô'),lvl(12)],
       [N.linked,popup('Move both to the top<br>to break the link.','Đưa cả hai lên đầu hàng chờ<br>để gỡ liên kết.'),lvl(17)],
-      [N.door,popup('Send boxes to the slots<br>to break the door.','Đưa hộp lên các ô<br>để phá cửa.'),lvl(22)]
+      [N.door,popup('Send boxes to the slots<br>to open the door.','Đưa hộp lên các ô<br>để mở cửa.'),lvl(22)],
+      [N.locked,popup('Send boxes to the slots<br>to unlock the item.','Đưa hộp lên các ô<br>để mở khóa vật phẩm.'),lvl(27)],
+      [N.blockQueue,popup('Send boxes to the slots<br>to unblock the queue.','Đưa hộp lên các ô<br>để mở hàng chờ bị chặn.'),lvl(32)]
     ]);
 
   B['booster-tutorial']=table(t('Booster tutorial','Hướng dẫn công cụ hỗ trợ'),
@@ -788,14 +841,15 @@ function view(l){
     [
       [N.hand,popup('Pick any box<br>in the queue!','Chọn bất kỳ hộp nào<br>trong hàng chờ!'),lvl(5),lvl(3)],
       [N.shuffle,popup('Shuffle the boxes<br>in queues!','Xáo trộn các hộp<br>trong hàng chờ!'),lvl(8),lvl(3)],
-      [N.remove,popup('Tap the box<br>to sort it instantly!','Chạm vào hộp<br>để xếp xong ngay!'),lvl(10),lvl(3)]
+      [N.magnet,popup('Tap the box<br>to sort it instantly!','Chạm vào hộp<br>để xếp xong ngay!'),lvl(10),lvl(3)]
     ]);
 
   const stops=[
     [1,t('First tutorial','Hướng dẫn đầu tiên'),'ftue','ftue-steps','FTUE'],
     [5,P.hand,'boost','booster-mechanics'],[7,P.hidden,'elem','elements-mechanics'],
-    [8,P.shuffle,'boost','booster-mechanics'],[10,P.remove,'boost','booster-mechanics'],
-    [12,P.locked,'elem','elements-mechanics'],[17,P.linked,'elem','elements-mechanics'],[22,P.door,'elem','elements-mechanics']
+    [8,P.shuffle,'boost','booster-mechanics'],[10,P.magnet,'boost','booster-mechanics'],
+    [12,P.lockedBox,'elem','elements-mechanics'],[17,P.linked,'elem','elements-mechanics'],[22,P.door,'elem','elements-mechanics'],
+    [27,P.locked,'elem','elements-mechanics'],[32,P.blockQueue,'elem','elements-mechanics']
   ];
   B['ftue--tutorial:after']=`<div class="glance">
     <h4>${t('Unlock order at a glance','Thứ tự mở khóa theo màn')}</h4>
@@ -828,13 +882,15 @@ function view(l){
     ent(N.linked,params([
       [look,t('A chain connects the two boxes.','Một sợi xích nối giữa hai hộp.')],
       [an,t('The chain breaks into pieces when the boxes unlink.','Sợi xích vỡ vụn khi hai hộp được gỡ liên kết.')]]))+
-    ent(N.door,params([[an,t('The door breaks into pieces when it breaks.','Cửa vỡ vụn khi bị phá.')]]));
+    ent(N.door,params([
+      [look,t('A door sits at the gate of every Enter Path, with the countdown shown on it.','Mỗi cổng Đường vào có một cánh cửa, trên cửa hiện con số đếm ngược.')],
+      [an,t('When the countdown reaches 0, one door opens and the other door shuts.','Khi con số về 0, một cửa mở ra và cửa còn lại đóng lại.')]]));
 
   const shift=t('When the booster is selected, the screen shifts down to show the rest of the boxes.','Khi chọn công cụ, màn hình trượt xuống để thấy các hộp còn lại.');
   B['booster-object-concept']=
-    ent(N.hand,params([[an,shift+' '+t('The chosen box then moves up to the slots like a normal box.','Hộp được chọn sau đó đi lên ô như hộp thường.')]]))+
+    ent(N.hand,params([[an,shift+' '+t('The chosen box lifts up, moves to the front, then pulls in all the matching-color items and packs them.','Hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút hết các vật phẩm cùng màu vào.')]]))+
     ent(N.shuffle,params([[an,shift+' '+t('The shuffle animation plays, then the screen moves back up.','Hiệu ứng xáo trộn chạy xong thì màn hình trượt về vị trí cũ.')]]))+
-    ent(N.remove,params([[an,shift+' '+t('The chosen box lifts up, moves to the front, then pulls in all the matching-color items and packs them.','Hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút hết các vật phẩm cùng màu vào.')]]));
+    ent(N.magnet,params([[an,t('The chosen box in the slots pulls in all the matching-color items and packs them, then clears.','Hộp được chọn trong ô hút hết các vật phẩm cùng màu vào rồi biến mất.')]]));
 
   /* ===== 4. SFX & haptics ===== */
   const cat={ui:t('UI','Giao diện (UI)'),core:t('Core game SFX','Lối chơi chính'),el:t('Element SFX','Yếu tố đặc biệt'),bo:t('Booster SFX','Công cụ hỗ trợ')};
@@ -852,7 +908,7 @@ function view(l){
     ['Hidden box','el',t('A Hidden Box is pushed to the top and reveals its color','Hộp ẩn lên tới đầu hàng chờ và hiện màu'),0],
     ['Locked item','el',t('A Locked Item unlocks','Vật phẩm bị khóa được mở khóa'),0],
     ['Linked box','el',t('A Linked Box breaks its link','Hộp liên kết được gỡ liên kết'),0],
-    ['Block door','el',t('A Block Door breaks','Cửa chặn vỡ'),0],
+    ['Block door','el',t('A Block Door opens','Cửa chặn mở ra'),0],
     ['Shuffle','bo',t('The player selects the Shuffle booster','Người chơi chọn công cụ Xáo trộn'),0]
   ];
   B['sfx--haptics']=table(t('SFX and haptics','Âm thanh và rung'),
@@ -874,8 +930,8 @@ function view(l){
       `<p>${t('Boosters listed for purchase:','Các công cụ được liệt kê để mua:')}</p>
        <div class="chips blk" lang="en"><span>Paper Box</span><span>Magnet</span><span>Remove</span></div>
        <p class="note"><b>${t('Editor’s note.','Ghi chú biên tập.')}</b> ${t(
-         `The source lists Paper Box, Magnet and Remove here, but the rest of this GDD names the boosters Hand, Shuffle and Remove. The names are kept as written and need confirming.`,
-         `Bản gốc ghi Paper Box, Magnet và Remove ở mục này, trong khi các phần khác của tài liệu gọi công cụ là Hand, Shuffle và Remove. Tên được giữ nguyên như bản gốc và cần xác nhận lại.`)}</p>`)+
+         `The source lists Paper Box, Magnet and Remove here, but the rest of this GDD names the boosters Hand, Shuffle and Magnet. The names are kept as written and need confirming.`,
+         `Bản gốc ghi Paper Box, Magnet và Remove ở mục này, trong khi các phần khác của tài liệu gọi công cụ là Hand, Shuffle và Magnet. Tên được giữ nguyên như bản gốc và cần xác nhận lại.`)}</p>`)+
     ent(t('Ads: limits and placement','Quảng cáo: giới hạn và vị trí'),params([
       [t('Max ads per day for the multiplier','Số quảng cáo tối đa mỗi ngày để nhân thưởng'),t('How many ads a player can watch per day to double or triple rewards.','Mỗi ngày người chơi được xem tối đa bao nhiêu quảng cáo để nhân đôi hoặc nhân ba phần thưởng.')+' '+unl],
       [t('Max ads per day for revive','Số quảng cáo tối đa mỗi ngày để hồi sinh'),t('How many ads a player can watch per day to revive.','Mỗi ngày người chơi được xem tối đa bao nhiêu quảng cáo để hồi sinh.')+' '+unl],
@@ -892,6 +948,46 @@ function view(l){
     t('JSON format','Định dạng JSON'),
     t('Tutorial on how to use the level builder tool','Hướng dẫn cách dùng công cụ dựng màn (level builder)')
   ]));
+
+  /* ===== 7. Change note ===== */
+  const day=(title,body)=>`<div class="sub"><h3><span>${title}</span></h3>${body}</div>`;
+  B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, listed by day.','Các thay đổi của tài liệu này, ghi theo từng ngày.')}</p>`+
+    day(t('9 October 2026','Ngày 9 tháng 10, 2026'),
+      ent(t('Boosters','Công cụ hỗ trợ'),ul([
+        t(`Hand: now clears the picked box right away. It can only pick boxes in the queues.`,
+          `Bàn tay: giờ dọn ngay hộp được chọn. Chỉ chọn được hộp trong hàng chờ.`),
+        t(`Remove is replaced by Magnet. Magnet clears a picked box in the slots right away, and can only pick boxes in the slots.`,
+          `Bỏ công cụ Loại bỏ (Remove), thay bằng Nam châm (Magnet). Nam châm dọn ngay hộp được chọn trong ô, và chỉ chọn được hộp đang nằm trong ô.`),
+        t(`Revive now uses a free Magnet instead of a free Remove.`,
+          `Hồi sinh giờ dùng Nam châm miễn phí thay cho Loại bỏ miễn phí.`)
+      ]))+
+      ent(t('Elements','Yếu tố đặc biệt'),ul([
+        t(`Block Door reworked: a door sits at the gate of every Enter Path, with a countdown. At 0, one door opens and the other shuts. Which doors are open or shut is set in the level config.`,
+          `Làm lại Cửa chặn: mỗi cổng Đường vào có một cửa, kèm con số đếm ngược. Khi về 0, một cửa mở và cửa còn lại đóng. Cửa nào mở, cửa nào đóng được đặt trong cấu hình màn chơi.`),
+        t(`New element: Locked Box. It cannot be sent up until its number reaches 0.`,
+          `Thêm yếu tố mới: Hộp bị khóa. Hộp không đưa lên được cho tới khi con số về 0.`),
+        t(`New element: Block Queue. It locks a whole queue until the other queues send up enough boxes, then moves to another queue.`,
+          `Thêm yếu tố mới: Hàng chờ bị chặn. Khóa cả một hàng chờ cho tới khi các hàng khác đưa đủ số hộp lên, rồi chuyển sang chặn hàng khác.`),
+        t(`New fail-safe for Locked Item, Locked Box, Block Door and Block Queue: if the level gets stuck, all locks and blocks are removed.`,
+          `Thêm cơ chế chống kẹt cho Vật phẩm bị khóa, Hộp bị khóa, Cửa chặn và Hàng chờ bị chặn: nếu màn chơi bị kẹt, mọi khóa và vật chặn được gỡ.`),
+        t(`Unlock levels: Locked Box at level 12, Locked Item moved from level 12 to 27, Block Queue at level 32.`,
+          `Màn mở khóa: Hộp bị khóa ở màn 12, Vật phẩm bị khóa chuyển từ màn 12 sang màn 27, Hàng chờ bị chặn ở màn 32.`)
+      ]))+
+      ent(t('Tutorial','Hướng dẫn'),ul([
+        t(`Element tutorial: added Locked Box and Block Queue, with their popup text.`,
+          `Hướng dẫn yếu tố đặc biệt: thêm Hộp bị khóa và Hàng chờ bị chặn, kèm nội dung popup.`),
+        t(`Block Door popup changed from “to break the door” to “to open the door”.`,
+          `Popup của Cửa chặn đổi từ “to break the door” thành “to open the door”.`),
+        t(`Element tutorial order is now Hidden Box, Locked Box, Linked Box, Block Door, Locked Item, Block Queue.`,
+          `Thứ tự trong bảng hướng dẫn yếu tố giờ là Hộp ẩn, Hộp bị khóa, Hộp liên kết, Cửa chặn, Vật phẩm bị khóa, Hàng chờ bị chặn.`),
+        t(`Booster tutorial: Remove renamed to Magnet.`,
+          `Hướng dẫn công cụ hỗ trợ: đổi tên Remove thành Magnet.`)
+      ]))+
+      ent(t('Other sections','Các mục khác'),ul([
+        t(`Element objects, Booster objects, SFX, the Remote config note and the unlock timeline updated to match the changes above.`,
+          `Đối tượng yếu tố đặc biệt, Đối tượng công cụ hỗ trợ, Âm thanh, ghi chú ở Cấu hình từ xa và dòng thứ tự mở khóa được cập nhật theo các thay đổi trên.`),
+        t(`Added this Change note section.`,`Thêm mục Ghi chú thay đổi này.`)
+      ])));
 
   /* ----- hero ----- */
   const legend=[
@@ -1220,3 +1316,5 @@ try{
 </script>
 </body>
 </html>
+
+</body></html>
