@@ -501,7 +501,7 @@ function view(l){
   const N={
     hidden:nm('Hidden Box','Hộp ẩn'),locked:nm('Locked Item','Vật phẩm bị khóa'),
     linked:nm('Linked Box','Hộp liên kết'),door:nm('Block Door','Cửa chặn'),
-    lockedBox:nm('Locked Box','Hộp bị khóa'),blockQueue:nm('Block Queue','Hàng chờ bị chặn'),
+    lockedBox:nm('Locked Box','Hộp bị khóa'),blockQueue:nm('Block Queue','Hàng chờ bị chặn'),lockedSlot:nm('Locked Slot','Ô bị khóa'),
     hand:nm('Hand','Bàn tay'),shuffle:nm('Shuffle','Xáo trộn'),magnet:nm('Magnet','Nam châm')
   };
   const P={ /* plain names for running text and tables */
@@ -725,20 +725,34 @@ function view(l){
       fsLine(`if no other queue can send a box (the other queues are empty, or their front-row boxes cannot be sent), the countdown can no longer move. All locks are removed and no queue stays blocked.`,
              `nếu không hàng chờ nào khác đưa được hộp lên (các hàng khác đã hết hộp, hoặc hộp ở hàng đầu của chúng không đưa lên được), con số không thể giảm tiếp. Khi đó mọi khóa được gỡ và không còn hàng chờ nào bị chặn.`)
     ]),unlock(32))+
+    ent(N.lockedSlot,ul([
+      t(`A Locked Slot is a slot that is locked. It shows a lock number on it.`,
+        `Ô bị khóa là một ô đang bị khóa. Trên ô hiện một con số.`),
+      t(`While it is locked, no box can be sent to it. A box that is sent up skips it and takes the next empty slot.`,
+        `Khi còn bị khóa, không hộp nào được đưa vào ô này. Hộp được đưa lên sẽ bỏ qua ô này và vào ô trống kế tiếp.`),
+      t(`The lock works like the other locked elements: each box sent to a slot lowers the number by 1.`,
+        `Khóa hoạt động giống các yếu tố bị khóa khác: mỗi hộp được đưa lên ô thì con số giảm đi 1.`),
+      t(`When the number reaches 0, the slot unlocks and works like a normal slot.`,
+        `Khi con số về 0, ô mở khóa và dùng được như ô bình thường.`),
+      fsLine(`if every unlocked slot is taken and none of the boxes in them can take another item while a slot is still locked, no box can be sent and the number can no longer drop. All locks are removed.`,
+             `nếu mọi ô chưa bị khóa đều đã có hộp, không hộp nào nhận thêm được vật phẩm, trong khi vẫn còn ô bị khóa, thì không đưa được hộp nào lên và con số không thể giảm tiếp. Khi đó mọi khóa được gỡ.`)
+    ]))+
     ent(nm('Fail-safe for locks and blocks','Cơ chế chống kẹt'),ul([
-      t(`Locked Item, Locked Box, Block Door and Block Queue all count down on boxes sent to the slots. If no more boxes can be sent, their countdowns can never reach 0 and the level would be stuck.`,
-        `Vật phẩm bị khóa, Hộp bị khóa, Cửa chặn và Hàng chờ bị chặn đều đếm theo số hộp được đưa lên ô. Nếu không còn đưa được hộp nào lên, các con số sẽ không bao giờ về 0 và màn chơi bị kẹt.`),
-      t(`The game treats these two cases as a stuck:`,`Trò chơi coi hai trường hợp sau là bị kẹt:`)+ol([
+      t(`Locked Item, Locked Box, Locked Slot, Block Door and Block Queue all count down on boxes sent to the slots. If no more boxes can be sent, their countdowns can never reach 0 and the level would be stuck.`,
+        `Vật phẩm bị khóa, Hộp bị khóa, Ô bị khóa, Cửa chặn và Hàng chờ bị chặn đều đếm theo số hộp được đưa lên ô. Nếu không còn đưa được hộp nào lên, các con số sẽ không bao giờ về 0 và màn chơi bị kẹt.`),
+      t(`The game treats these cases as a stuck:`,`Trò chơi coi các trường hợp sau là bị kẹt:`)+ol([
         t(`Boxes are still waiting in the queues, but no box in the front row can be sent up, and at least one Locked Box is still locked or one queue is still blocked.`,
           `Hàng chờ vẫn còn hộp nhưng không hộp nào ở hàng đầu đưa lên được, trong khi vẫn còn Hộp bị khóa chưa mở hoặc còn hàng chờ đang bị chặn.`),
         t(`Every box has been sent up, but Locked Items still remain or a Block Door is still shut.`,
-          `Mọi hộp đã được đưa lên hết nhưng vẫn còn Vật phẩm bị khóa hoặc còn Cửa chặn đang đóng.`)
+          `Mọi hộp đã được đưa lên hết nhưng vẫn còn Vật phẩm bị khóa hoặc còn Cửa chặn đang đóng.`),
+        t(`Every unlocked slot is taken and no box in them can take another item, but a Locked Slot is still locked.`,
+          `Mọi ô chưa bị khóa đều đã có hộp và không hộp nào nhận thêm được vật phẩm, nhưng vẫn còn Ô bị khóa chưa mở.`)
       ]),
-      t(`When a stuck happens, all locks and blocks in the level are removed at once: every Locked Item and Locked Box unlocks, every Block Door opens, and no queue stays blocked.`,
-        `Khi bị kẹt, mọi khóa và vật chặn trong màn được gỡ cùng lúc: tất cả Vật phẩm bị khóa và Hộp bị khóa mở khóa, mọi Cửa chặn mở ra, và không còn hàng chờ nào bị chặn.`),
+      t(`When a stuck happens, all locks and blocks in the level are removed at once: every Locked Item, Locked Box and Locked Slot unlocks, every Block Door opens, and no queue stays blocked.`,
+        `Khi bị kẹt, mọi khóa và vật chặn trong màn được gỡ cùng lúc: tất cả Vật phẩm bị khóa, Hộp bị khóa và Ô bị khóa mở khóa, mọi Cửa chặn mở ra, và không còn hàng chờ nào bị chặn.`),
       t(`They stay removed for the rest of the level.`,`Chúng không xuất hiện lại cho tới hết màn.`),
-      t(`Full slots are not a stuck. If every slot is taken and no box in the slots can take another item, the normal lose and revive rules apply.`,
-        `Hết ô trống không tính là bị kẹt. Nếu mọi ô đều đã có hộp và không hộp nào trong ô nhận thêm được vật phẩm, luật thua và hồi sinh vẫn áp dụng như bình thường.`)
+      t(`Full slots are not a stuck when no slot is locked. If every slot is taken and no box in the slots can take another item, the normal lose and revive rules apply.`,
+        `Hết ô trống không tính là bị kẹt khi không còn ô nào bị khóa. Nếu mọi ô đều đã có hộp và không hộp nào trong ô nhận thêm được vật phẩm, luật thua và hồi sinh vẫn áp dụng như bình thường.`)
     ])).replace('<div class="ent">','<div class="ent" id="lock-fail-safe">');
 
   const hbReveal=t(`Hidden Box: can be selected. It reveals its color and capacity immediately.`,`Hộp ẩn: chọn được. Hộp hiện ngay màu và sức chứa.`);
@@ -829,11 +843,12 @@ function view(l){
     [t('Element','Yếu tố'),t('Popup text','Nội dung popup'),t('Unlocks at level','Mở ở màn')],
     [
       [N.hidden,popup('Move box to the top<br>to reveal its color.','Đưa hộp lên đầu hàng chờ<br>để hiện màu.'),lvl(7)],
-      [N.lockedBox,popup('To unlock locked boxes,<br>send boxes into the slots','Để mở khóa hộp bị khóa,<br>hãy đưa hộp vào các ô'),lvl(12)],
+      [N.lockedBox,popup('To unlock boxes,<br>send them into the slots.','Để mở khóa hộp,<br>hãy đưa chúng vào các ô.'),lvl(12)],
       [N.linked,popup('Move both to the top<br>to break the link.','Đưa cả hai lên đầu hàng chờ<br>để gỡ liên kết.'),lvl(17)],
       [N.door,popup('Send boxes to the slots<br>to open the door.','Đưa hộp lên các ô<br>để mở cửa.'),lvl(22)],
       [N.locked,popup('Send boxes to the slots<br>to unlock the item.','Đưa hộp lên các ô<br>để mở khóa vật phẩm.'),lvl(27)],
-      [N.blockQueue,popup('Send boxes to the slots<br>to unblock the queue.','Đưa hộp lên các ô<br>để mở hàng chờ bị chặn.'),lvl(32)]
+      [N.blockQueue,popup('Send boxes to the slots<br>to unblock the queue.','Đưa hộp lên các ô<br>để mở hàng chờ bị chặn.'),lvl(32)],
+      [N.lockedSlot,popup('Send boxes to other slots<br>to unlock the locked one.','Đưa hộp lên các ô khác<br>để mở khóa ô bị khóa.'),tbd]
     ]);
 
   B['booster-tutorial']=table(t('Booster tutorial','Hướng dẫn công cụ hỗ trợ'),
@@ -951,7 +966,20 @@ function view(l){
 
   /* ===== 7. Change note ===== */
   const day=(title,body)=>`<div class="sub"><h3><span>${title}</span></h3>${body}</div>`;
-  B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, listed by day.','Các thay đổi của tài liệu này, ghi theo từng ngày.')}</p>`+
+  B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, newest day first.','Các thay đổi của tài liệu này, ngày mới nhất ở trên cùng.')}</p>`+
+    day(t('11 October 2026','Ngày 11 tháng 10, 2026'),
+      ent(t('Elements','Yếu tố đặc biệt'),ul([
+        t(`New element: Locked Slot. No box can be sent to it until its number reaches 0. It has a fail-safe like the other locks.`,
+          `Thêm yếu tố mới: Ô bị khóa. Không hộp nào được đưa vào ô này cho tới khi con số về 0. Ô bị khóa cũng có cơ chế chống kẹt như các khóa khác.`)
+      ]))+
+      ent(t('Tutorial','Hướng dẫn'),ul([
+        t(`Locked Box popup changed to “To unlock boxes, / send them into the slots.”`,
+          `Popup của Hộp bị khóa đổi thành “To unlock boxes, / send them into the slots.”`),
+        t(`Element tutorial: added Locked Slot at the bottom, unlock level TBD.`,
+          `Hướng dẫn yếu tố đặc biệt: thêm Ô bị khóa ở cuối bảng, màn mở khóa chưa chốt.`),
+        t(`Locked Slot popup: “Send boxes to other slots / to unlock the locked one.”`,
+          `Popup của Ô bị khóa: “Send boxes to other slots / to unlock the locked one.”`)
+      ])))+
     day(t('9 October 2026','Ngày 9 tháng 10, 2026'),
       ent(t('Boosters','Công cụ hỗ trợ'),ul([
         t(`Hand: now clears the picked box right away. It can only pick boxes in the queues.`,
