@@ -17,6 +17,7 @@
   --display:"Baloo 2","Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --rail-w:304px; --bar-h:0px;
+  --hid:#7D8597; --ice:#4FB3DB; --door:#8A5A35; --veil:rgba(24,32,58,.58);
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
@@ -25,11 +26,13 @@
   :root:not([data-theme="light"]){
     --paper:#131826; --surface:#1B2234; --ink:#E9EDF7; --muted:#A3ADC4; --line:#2F3852; --tint:#232B41;
     --rail:#0E1220; --track:#0B0F1B; --accent:#8FB1FF; --focus:#8FB1FF; --flash:rgba(255,214,64,.26); --wip:#5A4B14;
+    --hid:#6E778C; --ice:#8FD8F5; --door:#B98252; --veil:rgba(6,9,18,.66);
   }
 }
 :root[data-theme="dark"]{
   --paper:#131826; --surface:#1B2234; --ink:#E9EDF7; --muted:#A3ADC4; --line:#2F3852; --tint:#232B41;
   --rail:#0E1220; --track:#0B0F1B; --accent:#8FB1FF; --focus:#8FB1FF; --flash:rgba(255,214,64,.26); --wip:#5A4B14;
+    --hid:#6E778C; --ice:#8FD8F5; --door:#B98252; --veil:rgba(6,9,18,.66);
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -135,6 +138,29 @@ main{container-type:inline-size;padding:48px clamp(20px,5vw,64px) 30vh;width:100
 .bn.l{fill:#18203A}
 .pin circle{fill:var(--ink);stroke:var(--surface);stroke-width:2}
 .pin text{font:700 12.5px var(--display);text-anchor:middle;fill:var(--paper)}
+/* element demos */
+.demo{margin:14px 0 0;max-width:212px}
+.demo-box{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 8px 6px}
+.demo svg{display:block;width:100%;height:auto;overflow:visible}
+.demo .scene g,.demo .scene circle,.demo .scene rect,.demo .scene line,.demo .scene path{transform-box:fill-box;transform-origin:center}
+.demo figcaption{font-size:.8rem;line-height:1.45;color:var(--muted);margin:8px 2px 0}
+.demo-btn{position:absolute;right:6px;bottom:6px;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.demo-btn svg{width:11px;height:11px;fill:currentColor}
+.demo-btn .i-play,.demo-btn[aria-pressed="true"] .i-pause{display:none}
+.demo-btn[aria-pressed="true"] .i-play{display:block}
+.bn.sm{font-size:15px}
+.chain{fill:none;stroke:var(--ink);stroke-width:4;stroke-dasharray:6 3;stroke-linecap:round}
+.veil{fill:var(--veil)}
+.padlock path{fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round}
+.padlock rect{fill:#fff}
+.padlock.ink path{stroke:var(--ink)}
+.padlock.ink rect{fill:var(--ink)}
+.hidbox{fill:var(--hid)}
+.qmark{font:800 17px var(--display);text-anchor:middle;fill:#fff}
+.ice{fill:none;stroke:var(--ice);stroke-width:3}
+.door{fill:var(--door)}
+.smoke circle{fill:var(--line)}
+.lkslot{fill:var(--tint);stroke:var(--muted);stroke-width:1.6}
 .part{transition:opacity .18s ease}
 .field[data-hl] .part{opacity:.2}
 .field[data-hl="A"] .part-A,.field[data-hl="B"] .part-B,.field[data-hl="C"] .part-C,.field[data-hl="D"] .part-D,.field[data-hl="E"] .part-E{opacity:1}
@@ -157,6 +183,7 @@ main{container-type:inline-size;padding:48px clamp(20px,5vw,64px) 30vh;width:100
 
 .ent{padding:18px 0 16px;border-top:1px solid var(--line)}
 .ent-h h4,.defs dt{font:700 1.14rem/1.3 var(--display);margin:0}
+.ent-h{min-width:0}
 .orig{display:block;font:500 .82rem/1.3 var(--body);color:var(--muted)}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0;font-size:.84rem;font-weight:500;line-height:1.35}
 .tags span{display:inline-block;background:var(--tint);color:var(--ink);border-radius:8px;padding:3px 9px}
@@ -425,12 +452,12 @@ const UI={
       matches:n=>n===1?'1 match':n+' matches',none:q=>`No matches for “${q}”.`,tryShort:'Try a shorter or different word.',
       other:n=>(n===1?'1 match':n+' matches')+' in the Vietnamese version.',switchTo:'Switch to Tiếng Việt',
       tip:'Enter jumps to the next match. Esc clears.',overview:'Overview',wip:'In progress',
-      pause:'Pause motion',play:'Play motion',title:'Caps Sorting GDD'},
+      pause:'Pause motion',play:'Play motion',pauseDemo:'Pause demo',playDemo:'Play demo',title:'Caps Sorting GDD'},
   vi:{sub:'Tài liệu thiết kế game',search:'Tìm trong tài liệu',searchShort:'Tìm kiếm',contents:'Mục lục',language:'Ngôn ngữ',clear:'Xóa tìm kiếm',
       matches:n=>n+' kết quả',none:q=>`Không tìm thấy “${q}”.`,tryShort:'Hãy thử từ khóa ngắn hơn hoặc từ khác.',
       other:n=>`Có ${n} kết quả trong bản tiếng Anh.`,switchTo:'Chuyển sang English',
       tip:'Nhấn Enter để tới kết quả kế tiếp. Nhấn Esc để xóa.',overview:'Tổng quan',wip:'Đang viết',
-      pause:'Dừng chuyển động',play:'Chạy chuyển động',title:'Caps Sorting GDD'}
+      pause:'Dừng chuyển động',play:'Chạy chuyển động',pauseDemo:'Dừng minh họa',playDemo:'Chạy minh họa',title:'Caps Sorting GDD'}
 };
 
 /* ---------- play-screen sketch ---------- */
@@ -438,12 +465,155 @@ function rr(x,y,w,h,r){
   return `M${x+r},${y}H${x+w-r}A${r},${r} 0 0 1 ${x+w},${y+r}V${y+h-r}A${r},${r} 0 0 1 ${x+w-r},${y+h}H${x+r}A${r},${r} 0 0 1 ${x},${y+h-r}V${y+r}A${r},${r} 0 0 1 ${x+r},${y}Z`;
 }
 const LIGHT={4:1,5:1,6:1,8:1};
+const SZ={2:16,3:24,4:32,5:40,6:24};
 function boxSVG(x,y,w,h,c,n){
   return `<rect class="f${c}" x="${x}" y="${y}" width="${w}" height="${h}" rx="9"/><rect class="lip" x="${x}" y="${y}" width="${w}" height="${h}" rx="9"/>`+
          `<rect class="f${c}" x="${x}" y="${y}" width="${w}" height="${h-5}" rx="9"/>`+
-         `<text class="bn${LIGHT[c]?' l':''}" x="${x+w/2}" y="${y+(h-5)/2}" dy=".34em">${n}</text>`;
+         `<text class="bn${LIGHT[c]?' l':''}" x="${x+w/2}" y="${y+(h-5)/2}" dy=".34em">${SZ[n]||n}</text>`;
 }
 function pin(x,y,l){return `<g class="pin"><circle cx="${x}" cy="${y}" r="11"/><text x="${x}" y="${y}" dy=".34em">${l}</text></g>`;}
+/* ---------- element demos: small looping sketches, one per element ---------- */
+const DSX=[19,61,103,145],BW=34,BH=32;
+function T(x,y,s){return `translate(${x}px,${y}px)`+(s!=null?` scale(${s})`:'');}
+function mbox(x,y,c,n){
+  return `<rect class="f${c}" x="${x}" y="${y}" width="${BW}" height="${BH}" rx="8"/><rect class="lip" x="${x}" y="${y}" width="${BW}" height="${BH}" rx="8"/>`+
+         `<rect class="f${c}" x="${x}" y="${y}" width="${BW}" height="${BH-4}" rx="8"/><text class="bn sm${LIGHT[c]?' l':''}" x="${x+BW/2}" y="${y+(BH-4)/2}" dy=".35em">${SZ[n]||n}</text>`;
+}
+function dslots(y,skip){return DSX.map((x,i)=>skip&&skip.includes(i)?'':`<rect class="slot" x="${x}" y="${y}" width="36" height="36" rx="8"/>`).join('');}
+function cdBadge(cx,cy,extra){
+  const vals=['2','1','0'].concat(extra||[]);
+  return `<g class="pin cdg"><circle cx="${cx}" cy="${cy}" r="9.5"/>${vals.map((v,i)=>`<text class="v${i}" x="${cx}" y="${cy}" dy=".35em"${i?' style="opacity:0"':''}>${v.replace(/b$/,'')}</text>`).join('')}</g>`;
+}
+function padlock(cx,cy,ink){return `<g class="padlock${ink?' ink':''}"><path d="M${cx-4.5},${cy-1}v-3.5a4.5,4.5 0 0 1 9,0v3.5"/><rect x="${cx-7}" y="${cy-1}" width="14" height="11" rx="2.5"/></g>`;}
+function cdTracks(sel,a,b){return [[`${sel} .v0`,'opacity',[[0,1],[a,1],[a+.12,0]]],[`${sel} .v1`,'opacity',[[0,0],[a,0],[a+.12,1],[b,1],[b+.12,0]]],[`${sel} .v2`,'opacity',[[0,0],[b,0],[b+.12,1]]]];}
+const DEMOS={
+  hidden:{D:6.4,
+    svg:()=>dslots(12)+
+      `<g class="a0">${mbox(62,74,2,3)}</g>`+
+      `<g class="qa"><g class="hid"><rect class="hidbox" x="62" y="110" width="${BW}" height="${BH}" rx="8"/><rect class="lip" x="62" y="110" width="${BW}" height="${BH}" rx="8"/><rect class="hidbox" x="62" y="110" width="${BW}" height="${BH-4}" rx="8"/><text class="qmark" x="79" y="124" dy=".35em">?</text></g>`+
+      `<g class="rev" style="opacity:0">${mbox(62,110,6,5)}</g>${mbox(62,146,3,2)}</g>`+
+      `<g>${mbox(104,74,1,4)}${mbox(104,110,5,6)}${mbox(104,146,7,3)}</g>`+
+      `<g class="smoke"><circle cx="68" cy="84" r="10" style="opacity:0"/><circle cx="91" cy="86" r="11" style="opacity:0"/><circle cx="78" cy="99" r="12" style="opacity:0"/><circle cx="74" cy="76" r="8" style="opacity:0"/></g>`,
+    tracks:()=>[
+      ['.a0','transform',[[.5,T(0,0)],[1.3,T(-42,-60)]]],
+      ['.qa','transform',[[1.5,T(0,0)],[2.0,T(0,-36)]]],
+      ['.hid','opacity',[[0,1],[2.45,1],[2.6,0]]],
+      ['.rev','opacity',[[0,0],[2.45,0],[2.6,1]]],
+      ['.smoke circle','transform',[[2.2,'scale(.3)'],[2.95,'scale(1.4)']]],
+      ['.smoke circle','opacity',[[0,0],[2.2,0],[2.35,.95],[2.95,0]]]
+    ]},
+  locked:{D:7.4,
+    svg:()=>`<rect class="trackfill" x="6" y="8" width="188" height="32" rx="16"/>`+
+      [[24,2],[48,5],[72,3],[96,1],[144,8],[168,4]].map(([x,c])=>`<circle class="f${c}" cx="${x}" cy="24" r="7"/>`).join('')+
+      `<circle class="f6 litem" cx="120" cy="24" r="7"/><circle class="ice" cx="120" cy="24" r="10.5"/>`+cdBadge(132,12)+
+      dslots(54)+`<g class="sb">${mbox(20,56,6,1)}</g>`+
+      `<g class="q0">${mbox(62,110,2,3)}</g><g class="q1">${mbox(62,146,3,2)}</g>`,
+    tracks:()=>[
+      ['.q0','transform',[[.6,T(0,0)],[1.3,T(0,-54)]]],
+      ['.q1','transform',[[1.5,T(0,0)],[1.9,T(0,-36)],[2.2,T(0,-36)],[2.9,T(42,-90)]]],
+      ...cdTracks('.cdg',1.3,2.9),
+      ['.cdg','opacity',[[0,1],[3.0,1],[3.3,0]]],
+      ['.ice','transform',[[3.0,'scale(1)'],[3.4,'scale(1.8)']]],
+      ['.ice','opacity',[[0,1],[3.0,1],[3.4,0]]],
+      ['.litem','transform',[[3.6,T(0,0)],[4.3,T(-83,46,.5)]]],
+      ['.litem','opacity',[[0,1],[4.2,1],[4.35,0]]],
+      ['.sb','transform',[[4.4,'scale(1)'],[4.6,'scale(1.12)'],[4.9,'scale(.2)']]],
+      ['.sb','opacity',[[0,1],[4.7,1],[4.9,0]]]
+    ]},
+  linked:{D:7.6,
+    svg:()=>dslots(12)+
+      `<g class="a0">${mbox(40,74,1,4)}</g>`+
+      `<g class="qa"><g class="a1">${mbox(40,110,7,3)}</g><g class="a2">${mbox(40,146,8,2)}</g></g>`+
+      `<g class="b0">${mbox(126,74,2,5)}</g><g class="qb">${mbox(126,110,3,3)}${mbox(126,146,4,4)}</g>`+
+      `<line class="chain chD" x1="74" y1="124" x2="126" y2="88"/>`+
+      `<line class="chain chH" x1="74" y1="88" x2="126" y2="88" style="opacity:0"/>`+
+      `<line class="chain chL" x1="74" y1="88" x2="97" y2="88" style="opacity:0"/><line class="chain chR" x1="103" y1="88" x2="126" y2="88" style="opacity:0"/>`,
+    tracks:()=>[
+      ['.a0','transform',[[.6,T(0,0)],[1.3,T(-20,-60)]]],
+      ['.qa','transform',[[1.5,T(0,0)],[2.0,T(0,-36)]]],
+      ['.chD','opacity',[[0,1],[1.5,1],[1.65,0]]],
+      ['.chH','opacity',[[0,0],[1.9,0],[2.05,1],[2.5,1],[2.55,0]]],
+      ['.chL','opacity',[[0,0],[2.5,0],[2.55,1],[2.95,0]]],['.chL','transform',[[2.5,T(0,0)],[2.95,T(-8,10)]]],
+      ['.chR','opacity',[[0,0],[2.5,0],[2.55,1],[2.95,0]]],['.chR','transform',[[2.5,T(0,0)],[2.95,T(8,10)]]],
+      ['.a1','transform',[[3.2,T(0,0)],[3.9,T(22,-60)]]],
+      ['.a2','transform',[[4.0,T(0,0)],[4.4,T(0,-36)]]],
+      ['.b0','transform',[[4.2,T(0,0)],[4.9,T(-22,-60)]]],
+      ['.qb','transform',[[5.1,T(0,0)],[5.5,T(0,-36)]]]
+    ]},
+  door:{D:8,
+    svg:()=>{
+      const lane=(x,cls,off)=>{let d='';for(let r=0;r<10;r++){for(let k=0;k<2;k++){d+=`<circle class="f${((r*3+k*5+off)%8)+1}" cx="${x+11+k*18}" cy="${-102+r*18}" r="6.5"/>`;}}return `<g clip-path="url(#dm-${cls})"><g class="${cls}">${d}</g></g>`;};
+      let cv='';for(let i=0;i<16;i++)cv+=`<circle class="f${((i*5)%8)+1}" cx="${-24+i*16}" cy="85" r="6"/>`;
+      return `<defs><clipPath id="dm-flL"><rect x="36" y="0" width="40" height="66"/></clipPath><clipPath id="dm-flR"><rect x="124" y="0" width="40" height="66"/></clipPath><clipPath id="dm-cv"><rect x="6" y="70" width="188" height="30" rx="15"/></clipPath></defs>`+
+        `<rect class="trackfill" x="36" y="0" width="40" height="76"/><rect class="trackfill" x="124" y="0" width="40" height="76"/>`+
+        `<rect class="trackfill" x="6" y="70" width="188" height="30" rx="15"/>`+
+        lane(36,'flL',0)+lane(124,'flR',3)+`<g clip-path="url(#dm-cv)"><g class="cv">${cv}</g></g>`+
+        `<rect class="door dL" x="31" y="61" width="50" height="9" rx="3" style="opacity:0"/>`+
+        `<g class="pin cdL" style="opacity:0"><circle cx="84" cy="58" r="9.5"/><text x="84" y="58" dy=".35em">2</text></g>`+
+        `<rect class="door dR" x="119" y="61" width="50" height="9" rx="3"/>`+cdBadge(172,58)+
+        dslots(112)+`<g class="sd0">${mbox(62,160,2,3)}</g><g class="sd1">${mbox(104,160,3,2)}</g>`;},
+    tracks:()=>[
+      ['.flL','transform',[[0,T(0,0),'linear'],[3.5,T(0,54)]]],
+      ['.flR','transform',[[0,T(0,0)],[3.9,T(0,0),'linear'],[7.4,T(0,54)]]],
+      ['.cv','transform',[[0,T(0,0),'linear'],[8,T(32,0)]]],
+      ['.sd0','transform',[[1.1,T(0,0)],[1.8,T(-42,-46)]]],
+      ['.sd1','transform',[[2.5,T(0,0)],[3.2,T(-42,-46)]]],
+      ...cdTracks('.cdg',1.8,3.2),
+      ['.cdg','opacity',[[0,1],[3.4,1],[3.6,0]]],
+      ['.dR','opacity',[[0,1],[3.4,1],[3.7,0]]],['.dR','transform',[[3.4,T(0,0)],[3.7,T(0,-8)]]],
+      ['.dL','opacity',[[0,0],[3.5,0],[3.8,1]]],['.dL','transform',[[3.5,T(0,-8)],[3.8,T(0,0)]]],
+      ['.cdL','opacity',[[0,0],[3.7,0],[3.95,1]]],['.cdL','transform',[[3.7,T(0,-6)],[3.95,T(0,0)]]]
+    ]},
+  lockedBox:{D:7.4,
+    svg:()=>dslots(12)+
+      `<g class="a0">${mbox(40,74,6,5)}</g><g class="qa">${mbox(40,110,8,3)}${mbox(40,146,5,2)}</g>`+
+      `<g class="lock"><rect class="veil" x="40" y="74" width="${BW}" height="${BH}" rx="8"/>${padlock(57,88)}</g>`+cdBadge(74,74)+
+      `<g class="b0">${mbox(126,74,2,3)}</g><g class="b1">${mbox(126,110,3,4)}</g><g class="b2">${mbox(126,146,1,2)}</g>`,
+    tracks:()=>[
+      ['.b0','transform',[[.6,T(0,0)],[1.3,T(-106,-60)]]],
+      ['.b1','transform',[[1.5,T(0,0)],[1.9,T(0,-36)],[2.2,T(0,-36)],[2.9,T(-64,-96)]]],
+      ['.b2','transform',[[1.5,T(0,0)],[1.9,T(0,-36)],[3.0,T(0,-36)],[3.4,T(0,-72)]]],
+      ...cdTracks('.cdg',1.3,2.9),
+      ['.cdg','opacity',[[0,1],[3.0,1],[3.3,0]]],
+      ['.lock','opacity',[[0,1],[3.0,1],[3.3,0]]],
+      ['.a0','transform',[[3.7,T(0,0)],[4.4,T(64,-60)]]],
+      ['.qa','transform',[[4.6,T(0,0)],[5.0,T(0,-36)]]]
+    ]},
+  blockQueue:{D:8,
+    svg:()=>dslots(12)+
+      `<g class="q1a">${mbox(24,74,6,5)}</g><g class="q1r">${mbox(24,110,8,3)}${mbox(24,146,1,2)}</g>`+
+      `<g class="q2a">${mbox(83,74,2,3)}</g><g class="q2r">${mbox(83,110,3,4)}${mbox(83,146,7,2)}</g>`+
+      `<g class="q3a">${mbox(142,74,4,4)}</g><g class="q3r">${mbox(142,110,5,3)}${mbox(142,146,2,6)}</g>`+
+      `<g class="bar"><rect class="veil" x="19" y="68" width="44" height="114" rx="9"/>${padlock(41,124)}${cdBadge(41,68,['2b'])}</g>`,
+    tracks:()=>[
+      ['.q2a','transform',[[.6,T(0,0)],[1.3,T(-21,-60)]]],
+      ['.q2r','transform',[[1.5,T(0,0)],[1.9,T(0,-36)]]],
+      ['.q3a','transform',[[2.1,T(0,0)],[2.8,T(-38,-60)]]],
+      ['.q3r','transform',[[3.0,T(0,0)],[3.4,T(0,-36)]]],
+      ['.cdg .v0','opacity',[[0,1],[1.3,1],[1.42,0]]],
+      ['.cdg .v1','opacity',[[0,0],[1.3,0],[1.42,1],[2.8,1],[2.92,0]]],
+      ['.cdg .v2','opacity',[[0,0],[2.8,0],[2.92,1],[3.1,1],[3.25,0]]],
+      ['.cdg .v3','opacity',[[0,0],[3.8,0],[3.95,1]]],
+      ['.bar','transform',[[3.1,T(0,0)],[3.9,T(59,0)]]],
+      ['.q1a','transform',[[4.2,T(0,0)],[4.9,T(-4,-60)]]],
+      ['.q1r','transform',[[5.1,T(0,0)],[5.5,T(0,-36)]]]
+    ]},
+  lockedSlot:{D:7.6,
+    svg:()=>dslots(12)+
+      `<g class="lk"><rect class="lkslot" x="61" y="12" width="36" height="36" rx="8"/>${padlock(79,29,true)}${cdBadge(97,12)}</g>`+
+      `<g class="a0">${mbox(40,74,1,4)}</g><g class="qa"><g class="a1">${mbox(40,110,2,3)}</g><g class="a2">${mbox(40,146,4,2)}</g></g>`+
+      `<g class="b0">${mbox(126,74,3,5)}</g><g class="qb">${mbox(126,110,7,2)}${mbox(126,146,8,4)}</g>`,
+    tracks:()=>[
+      ['.a0','transform',[[.6,T(0,0)],[1.3,T(-20,-60)]]],
+      ['.qa','transform',[[1.5,T(0,0)],[1.9,T(0,-36)]]],
+      ['.b0','transform',[[2.1,T(0,0)],[2.5,T(-11,-76)],[2.9,T(-22,-60)]]],
+      ...cdTracks('.cdg',1.3,2.9),
+      ['.lk','opacity',[[0,1],[3.0,1],[3.35,0]]],
+      ['.qb','transform',[[3.1,T(0,0)],[3.5,T(0,-36)]]],
+      ['.a1','transform',[[3.8,T(0,0)],[4.5,T(22,-60)]]],
+      ['.a2','transform',[[4.7,T(0,0)],[5.1,T(0,-36)]]]
+    ]}
+};
 function fieldSVG(label){
   const offs=[8,19.5,31,42.5],counts=[64,56,48,48];
   const perms=[[1,2,3,4,5,6,7,8],[4,7,1,6,2,8,3,5],[6,3,8,2,7,5,1,4],[2,5,4,8,1,3,6,7]];
@@ -485,7 +655,7 @@ function view(l){
   const ol=items=>`<ol class="steps">${items.map(i=>`<li>${i}</li>`).join('')}</ol>`;
   const params=items=>`<ul class="params">${items.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul>`;
   const nm=(en,v)=>vi?`${v} <span class="orig">${en}</span>`:en;
-  const ent=(name,body,tags)=>`<div class="ent"><div class="ent-h"><h4>${name}</h4>${tags?`<p class="tags">${[].concat(tags).map(x=>`<span>${x}</span>`).join(' ')}</p>`:''}</div><div class="ent-b">${body}</div></div>`;
+  const ent=(name,body,tags,dm)=>`<div class="ent"><div class="ent-h"><h4>${name}</h4>${tags?`<p class="tags">${[].concat(tags).map(x=>`<span>${x}</span>`).join(' ')}</p>`:''}${dm||''}</div><div class="ent-b">${body}</div></div>`;
   const defs=pairs=>`<dl class="defs">${pairs.map(([a,b])=>`<div class="blk"><dt>${a}</dt><dd>${b}</dd></div>`).join('')}</dl>`;
   const table=(label,heads,rows,cls)=>`<div class="tbl ${cls||''}" tabindex="0" role="region" aria-label="${esc(label)}"><table><thead><tr>${heads.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>i===0?`<th scope="row">${c}</th>`:`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   const popup=(text,v)=>`<span class="popup" lang="en">${text}</span>${vi?`<span class="gloss">${v}</span>`:''}`;
@@ -548,6 +718,10 @@ function view(l){
     ent(nm('Box','Hộp'),ul([
       t(`Boxes are lined up in queues below the conveyor.`,`Các hộp xếp thành từng hàng chờ (queue) bên dưới băng chuyền.`),
       t(`Each box has one of 8 colors (the same colors as items) and a capacity number.`,`Mỗi hộp có một trong 8 màu (giống màu vật phẩm) và một con số sức chứa.`),
+      t(`Boxes come in 4 sizes, set by how many items they hold:`,`Hộp có 4 kích cỡ, tính theo số vật phẩm hộp chứa được:`)+ol([
+        t(`Size 1: 16 items`,`Cỡ 1: 16 vật phẩm`),t(`Size 2: 24 items`,`Cỡ 2: 24 vật phẩm`),
+        t(`Size 3: 32 items`,`Cỡ 3: 32 vật phẩm`),t(`Size 4: 40 items`,`Cỡ 4: 40 vật phẩm`)
+      ]),
       t(`The player taps a box in the front row to send it up to an empty slot.`,`Người chơi chạm vào hộp ở hàng đầu để đưa hộp lên một ô trống.`),
       t(`A sent box takes the first empty slot, checking from left to right.`,`Hộp được đưa lên sẽ vào ô trống đầu tiên, tính từ trái sang phải.`),
       t(`Once in a slot, the box looks for items of its color and pulls them in.`,`Khi đã vào ô, hộp bắt đầu tìm vật phẩm cùng màu và hút vào.`),
@@ -658,6 +832,18 @@ function view(l){
           `Ô quảng cáo thưởng có thể tăng số ô dùng được lên tối đa 6 ô mỗi màn.`)
       ]));
 
+  const DCAP={
+    hidden:t('The box reaches the top of its queue and reveals its color.','Hộp lên tới đầu hàng chờ và hiện màu.'),
+    locked:t('Two boxes are sent, the number hits 0 and the item can be picked.','Đưa 2 hộp lên, con số về 0 và vật phẩm được nhặt.'),
+    linked:t('Both boxes reach the top, the link breaks and they can be sent.','Hai hộp cùng lên đầu hàng chờ, liên kết được gỡ và cả hai được đưa lên.'),
+    door:t('Two boxes are sent, the number hits 0 and the doors swap.','Đưa 2 hộp lên, con số về 0 và hai cửa đổi trạng thái.'),
+    lockedBox:t('Other boxes are sent until the number hits 0, then the box can go up.','Đưa các hộp khác lên tới khi con số về 0, sau đó hộp được đưa lên.'),
+    blockQueue:t('Other queues send two boxes, then the block moves to another queue.','Các hàng khác đưa 2 hộp lên, sau đó vật chặn chuyển sang hàng khác.'),
+    lockedSlot:t('A box skips the locked slot. When the number hits 0, the slot opens.','Hộp bỏ qua ô bị khóa. Khi con số về 0, ô được mở.')
+  };
+  const demo=k=>`<figure class="demo" data-demo="${k}"><div class="demo-box"><svg viewBox="0 0 200 196" role="img" aria-label="${esc(DCAP[k])}"><g class="scene">${DEMOS[k].svg()}</g></svg>`+
+    `<button type="button" class="demo-btn" aria-pressed="false" aria-label="${esc(ui.pauseDemo)}"><svg class="i-pause" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.5" y="1" width="3" height="10" rx="1"/><rect x="7.5" y="1" width="3" height="10" rx="1"/></svg><svg class="i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></button></div>`+
+    `<figcaption>${DCAP[k]}</figcaption></figure>`;
   const fsSee=`<a href="#lock-fail-safe">${t('See “Fail-safe for locks and blocks”.','Xem mục “Cơ chế chống kẹt”.')}</a>`;
   const fsLine=(en,vi)=>`<b>${t('Fail-safe','Chống kẹt')}:</b> ${t(en,vi)} ${fsSee}`;
   B['elements-mechanics']=
@@ -666,7 +852,7 @@ function view(l){
       t(`To reveal them, the player has to move the box to the top of its queue.`,`Muốn biết màu và sức chứa, người chơi phải đưa hộp lên đầu hàng chờ.`),
       t(`The Hand booster can also reveal and clear it early, without moving it to the top first.`,
         `Người chơi cũng có thể dùng công cụ Bàn tay để mở và dọn hộp sớm, không cần đưa hộp lên đầu hàng chờ trước.`)
-    ]),unlock(7))+
+    ]),unlock(7),demo('hidden'))+
     ent(N.locked,ul([
       t(`A Locked Item shows a lock number on top. Its color stays visible.`,`Vật phẩm bị khóa hiện một con số phía trên. Màu của vật phẩm vẫn nhìn thấy được.`),
       t(`The lock only stops boxes from picking the item up. Boxes cannot pick it up until it unlocks.`,`Khóa chỉ ngăn hộp nhặt vật phẩm này. Khi chưa mở khóa, hộp không thể nhặt nó.`),
@@ -677,14 +863,14 @@ function view(l){
         `Trước khi mở khóa, vật phẩm vẫn chạy trên băng chuyền như bình thường, chỉ là chưa nhặt được.`),
       fsLine(`if the player has already sent up every box and Locked Items still remain, the number can no longer drop. All locks are removed.`,
              `nếu người chơi đã đưa hết các hộp lên mà vẫn còn Vật phẩm bị khóa, con số không thể giảm tiếp. Khi đó mọi khóa được gỡ.`)
-    ]),unlock(27))+
+    ]),unlock(27),demo('locked'))+
     ent(N.linked,ul([
       t(`Linked Boxes are two boxes chained together in the queues.`,`Hộp liên kết là hai hộp được nối với nhau trong các hàng chờ.`),
       t(`The two boxes must sit in two different queues.`,`Hai hộp phải nằm ở hai hàng chờ khác nhau.`),
       t(`A Linked Box can't be sent up until the link is broken.`,`Khi chưa gỡ liên kết thì không thể đưa hộp lên.`),
       t(`To break the link, both boxes must reach the top of their queues.`,`Muốn gỡ, cả hai hộp phải cùng lên tới đầu hàng chờ.`),
       t(`Once unlinked, they can be sent to empty slots like normal boxes.`,`Gỡ xong, hai hộp được đưa lên ô trống như hộp thường.`)
-    ]),unlock(17))+
+    ]),unlock(17),demo('linked'))+
     ent(N.door,ul([
       t(`A Block Door is a blockage at the gate of every Enter Path, with a countdown.`,
         `Cửa chặn là vật cản đặt ở cổng của mọi Đường vào, kèm một con số đếm ngược.`),
@@ -702,7 +888,7 @@ function view(l){
         `Khi cửa mở, các vật phẩm phía sau tiếp tục chạy vào lấp chỗ trống trên băng chuyền trung tâm.`),
       fsLine(`if every box has been sent up and a door is still shut, the countdown can no longer move. All locks are removed and every door opens.`,
              `nếu mọi hộp đã được đưa lên hết mà vẫn còn cửa đang đóng, con số không thể giảm tiếp. Khi đó mọi khóa được gỡ và tất cả cửa mở ra.`)
-    ]),unlock(22))+
+    ]),unlock(22),demo('door'))+
     ent(N.lockedBox,ul([
       t(`A Locked Box is a box in the queues that is locked in the same way as a Locked Item. It shows a lock number on top.`,
         `Hộp bị khóa là hộp trong hàng chờ bị khóa giống như Vật phẩm bị khóa. Trên hộp hiện một con số.`),
@@ -714,7 +900,7 @@ function view(l){
         `Khi con số về 0, hộp mở khóa và được đưa lên ô như hộp thường.`),
       fsLine(`if boxes are still waiting in the queues but none in the front row can be sent up (for example, every front-row box is a Locked Box), the numbers can no longer drop. All locks are removed.`,
              `nếu hàng chờ vẫn còn hộp nhưng không hộp nào ở hàng đầu đưa lên được (ví dụ mọi hộp ở hàng đầu đều là Hộp bị khóa), các con số không thể giảm tiếp. Khi đó mọi khóa được gỡ.`)
-    ]),unlock(12))+
+    ]),unlock(12),demo('lockedBox'))+
     ent(N.blockQueue,ul([
       t(`A Block Queue locks a whole queue. While a queue is blocked, none of its boxes can be sent up.`,
         `Hàng chờ bị chặn khóa cả một hàng chờ. Khi hàng chờ đang bị chặn, không hộp nào trong hàng đó được đưa lên.`),
@@ -728,7 +914,7 @@ function view(l){
         `Cửa chặn và Hàng chờ bị chặn không bao giờ xuất hiện trong cùng một màn.`),
       fsLine(`if no other queue can send a box (the other queues are empty, or their front-row boxes cannot be sent), the countdown can no longer move. All locks are removed and no queue stays blocked.`,
              `nếu không hàng chờ nào khác đưa được hộp lên (các hàng khác đã hết hộp, hoặc hộp ở hàng đầu của chúng không đưa lên được), con số không thể giảm tiếp. Khi đó mọi khóa được gỡ và không còn hàng chờ nào bị chặn.`)
-    ]),unlock(32))+
+    ]),unlock(32),demo('blockQueue'))+
     ent(N.lockedSlot,ul([
       t(`A Locked Slot is a slot that is locked. It shows a lock number on it.`,
         `Ô bị khóa là một ô đang bị khóa. Trên ô hiện một con số.`),
@@ -740,7 +926,7 @@ function view(l){
         `Khi con số về 0, ô mở khóa và dùng được như ô bình thường.`),
       fsLine(`if every unlocked slot is taken and none of the boxes in them can take another item while a slot is still locked, no box can be sent and the number can no longer drop. All locks are removed.`,
              `nếu mọi ô chưa bị khóa đều đã có hộp, không hộp nào nhận thêm được vật phẩm, trong khi vẫn còn ô bị khóa, thì không đưa được hộp nào lên và con số không thể giảm tiếp. Khi đó mọi khóa được gỡ.`)
-    ]))+
+    ]),null,demo('lockedSlot'))+
     ent(nm('Fail-safe for locks and blocks','Cơ chế chống kẹt'),ul([
       t(`Locked Item, Locked Box, Locked Slot, Block Door and Block Queue all count down on boxes sent to the slots. If no more boxes can be sent, their countdowns can never reach 0 and the level would be stuck.`,
         `Vật phẩm bị khóa, Hộp bị khóa, Ô bị khóa, Cửa chặn và Hàng chờ bị chặn đều đếm theo số hộp được đưa lên ô. Nếu không còn đưa được hộp nào lên, các con số sẽ không bao giờ về 0 và màn chơi bị kẹt.`),
@@ -769,6 +955,8 @@ function view(l){
         `Cho phép người chơi chọn bất kỳ hộp nào trong các hàng chờ để dọn hộp đó ngay lập tức, không cần chờ hộp lên tới đầu hàng chờ.`),
       t(`Only boxes in the queues can be picked, not boxes that are already in the slots.`,
         `Chỉ chọn được hộp trong hàng chờ, không chọn được hộp đang nằm trong ô.`),
+      t(`When activated, the camera shifts down to show at least 8 rows of the queues.`,
+        `Khi dùng, camera dịch xuống để hiện ít nhất 8 hàng hộp trong hàng chờ.`),
       t(`When triggered, the chosen box lifts up, moves to the front, then pulls in matching-color items and packs them. It takes exactly as many items as it needs to be full.`,
         `Khi dùng, hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút các vật phẩm cùng màu vào. Số vật phẩm hút vào bằng đúng số còn thiếu để hộp đầy.`),
       withEl+':'+ul([hbReveal,lbBreak,itemOrder])
@@ -907,7 +1095,7 @@ function view(l){
 
   const shift=t('When the booster is selected, the screen shifts down to show the rest of the boxes.','Khi chọn công cụ, màn hình trượt xuống để thấy các hộp còn lại.');
   B['booster-object-concept']=
-    ent(N.hand,params([[an,shift+' '+t('The chosen box lifts up, moves to the front, then pulls in all the matching-color items and packs them.','Hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút hết các vật phẩm cùng màu vào.')]]))+
+    ent(N.hand,params([[an,t('When the booster is activated, the camera shifts down to show at least 8 rows of the queues.','Khi dùng công cụ, camera dịch xuống để hiện ít nhất 8 hàng hộp trong hàng chờ.')+' '+t('The chosen box lifts up, moves to the front, then pulls in all the matching-color items and packs them.','Hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút hết các vật phẩm cùng màu vào.')]]))+
     ent(N.shuffle,params([[an,shift+' '+t('The shuffle animation plays, then the screen moves back up.','Hiệu ứng xáo trộn chạy xong thì màn hình trượt về vị trí cũ.')]]))+
     ent(N.magnet,params([[an,t('The chosen box in the slots pulls in all the matching-color items and packs them, then clears.','Hộp được chọn trong ô hút hết các vật phẩm cùng màu vào rồi biến mất.')]]));
 
@@ -971,14 +1159,25 @@ function view(l){
   /* ===== 7. Change note ===== */
   const day=(title,body)=>`<div class="sub"><h3><span>${title}</span></h3>${body}</div>`;
   B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, newest day first.','Các thay đổi của tài liệu này, ngày mới nhất ở trên cùng.')}</p>`+
+    day(t('13 October 2026','Ngày 13 tháng 10, 2026'),
+      ent(t('Main mechanics','Cơ chế chính'),ul([
+        t(`Boxes now come in 4 sizes: 16, 24, 32 and 40 items.`,`Hộp giờ có 4 kích cỡ: 16, 24, 32 và 40 vật phẩm.`),
+        t(`Box numbers in the sketch and the element demos updated to these sizes.`,`Con số trên hộp ở hình minh họa và các minh họa yếu tố được cập nhật theo các kích cỡ này.`)
+      ])))+
     day(t('12 October 2026','Ngày 12 tháng 10, 2026'),
       ent(t('Gameplay','Lối chơi'),ul([
         t(`Revive now gives a free Magnet to the 3 biggest boxes in the slots (was 2).`,
           `Hồi sinh giờ dùng Nam châm miễn phí cho 3 hộp lớn nhất trong các ô (trước đây là 2).`)
       ]))+
+      ent(t('Boosters','Công cụ hỗ trợ'),ul([
+        t(`Hand: when activated, the camera shifts down to show at least 8 rows of the queues.`,
+          `Bàn tay: khi dùng, camera dịch xuống để hiện ít nhất 8 hàng hộp trong hàng chờ.`)
+      ]))+
       ent(t('Elements','Yếu tố đặc biệt'),ul([
         t(`Block Door and Block Queue never appear in the same level.`,
-          `Cửa chặn và Hàng chờ bị chặn không bao giờ xuất hiện trong cùng một màn.`)
+          `Cửa chặn và Hàng chờ bị chặn không bao giờ xuất hiện trong cùng một màn.`),
+        t(`Each element now has a short animated demo.`,
+          `Mỗi yếu tố đặc biệt giờ có một hình minh họa động ngắn.`)
       ])))+
     day(t('11 October 2026','Ngày 11 tháng 10, 2026'),
       ent(t('Elements','Yếu tố đặc biệt'),ul([
@@ -1259,6 +1458,33 @@ function jump(id){
   try{history.replaceState(null,'',id==='top'?location.pathname+location.search:'#'+id);}catch(e){}
 }
 
+/* ---------- element demo engine (Web Animations, one loop per demo) ---------- */
+let demoStates=[],demoIO=null;
+function kfs(frames,prop,D){
+  const f=frames.slice().sort((a,b)=>a[0]-b[0]);
+  if(f[0][0]>0)f.unshift([0,f[0][1]]);
+  if(f[f.length-1][0]<D)f.push([D,f[f.length-1][1]]);
+  return f.map(([t,v,e])=>({offset:Math.min(1,Math.max(0,t/D)),[prop]:v,easing:e||'ease-in-out'}));
+}
+function applyDemo(st){const run=st.vis&&!st.user;st.anims.forEach(a=>{try{if(run)a.play();else a.pause();}catch(e){}});}
+function startDemos(){
+  demoStates.forEach(st=>st.anims.forEach(a=>{try{a.cancel();}catch(e){}}));demoStates=[];
+  if(demoIO){demoIO.disconnect();demoIO=null;}
+  if(!Element.prototype.animate)return;
+  $$('.demo',main).forEach(fig=>{
+    const def=DEMOS[fig.dataset.demo];if(!def)return;
+    const D=def.D,anims=[];
+    [['.scene','opacity',[[0,0],[.35,1],[D-.45,1],[D,0]]]].concat(def.tracks()).forEach(([sel,prop,frames])=>{
+      fig.querySelectorAll(sel).forEach(el=>{try{anims.push(el.animate(kfs(frames,prop,D),{duration:D*1000,iterations:Infinity}));}catch(e){}});
+    });
+    const st={fig,anims,user:false,vis:true};fig._demo=st;demoStates.push(st);
+  });
+  if('IntersectionObserver' in window){
+    demoIO=new IntersectionObserver(es=>es.forEach(e=>{const st=e.target._demo;if(!st)return;st.vis=e.isIntersecting;applyDemo(st);}),{rootMargin:'120px 0px'});
+    demoStates.forEach(st=>demoIO.observe(st.fig));
+  }
+}
+
 /* ---------- render + language ---------- */
 function render(){
   const ui=UI[lang];
@@ -1274,6 +1500,7 @@ function render(){
   spyEls=$$('[data-spy]',main);
   runSearch(false);
   spy();
+  startDemos();
 }
 function setLang(l){
   if(l===lang||(l!=='en'&&l!=='vi'))return;
@@ -1309,6 +1536,8 @@ document.addEventListener('click',e=>{
     setOpen(false);
     return;
   }
+  const db=tg.closest('.demo-btn');
+  if(db){const st=db.closest('.demo')._demo;const on=db.getAttribute('aria-pressed')!=='true';db.setAttribute('aria-pressed',on?'true':'false');db.setAttribute('aria-label',on?UI[lang].playDemo:UI[lang].pauseDemo);if(st){st.user=on;applyDemo(st);}return;}
   const pb=tg.closest('#pauseBtn');
   if(pb){paused=!paused;$('#field').classList.toggle('paused',paused);pb.textContent=paused?UI[lang].play:UI[lang].pause;return;}
   const lg=tg.closest('.legend button');
