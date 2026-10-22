@@ -875,8 +875,10 @@ function view(l){
       t(`A Locked Item shows a lock number on top. Its color stays visible.`,`Vật phẩm bị khóa hiện một con số phía trên. Màu của vật phẩm vẫn nhìn thấy được.`),
       t(`The lock only stops boxes from picking the item up. Boxes cannot pick it up until it unlocks.`,`Khóa chỉ ngăn hộp nhặt vật phẩm này. Khi chưa mở khóa, hộp không thể nhặt nó.`),
       t(`It unlocks after a set number of boxes have been sent to the slots.`,`Vật phẩm mở khóa sau khi người chơi đưa đủ số hộp lên ô.`),
-      t(`Each box sent to a slot lowers the number by 1. The countdown keeps going even while the item is off-screen.`,
-        `Mỗi hộp được đưa lên ô thì con số giảm đi 1. Con số vẫn tiếp tục giảm kể cả khi vật phẩm không nằm trong màn hình.`),
+      t(`The countdown only starts once the item enters the center conveyor. While it is still on an Enter Path, its number does not change.`,
+        `Con số chỉ bắt đầu đếm khi vật phẩm đã vào băng chuyền trung tâm. Khi vật phẩm còn ở trên Đường vào, con số giữ nguyên.`),
+      t(`Each box sent to a slot lowers the number by 1. Once started, the countdown keeps going even while the item is off-screen.`,
+        `Mỗi hộp được đưa lên ô thì con số giảm đi 1. Khi đã bắt đầu, con số vẫn tiếp tục giảm kể cả khi vật phẩm không nằm trong màn hình.`),
       t(`Until it unlocks, it moves along the conveyor like a normal item. It just can't be picked up.`,
         `Trước khi mở khóa, vật phẩm vẫn chạy trên băng chuyền như bình thường, chỉ là chưa nhặt được.`),
       fsLine(`if the player has already sent up every box and Locked Items still remain, the number can no longer drop. All locks are removed.`,
@@ -914,6 +916,8 @@ function view(l){
         `Khi còn bị khóa, hộp không thể được đưa lên ô, kể cả khi đã lên tới hàng đầu.`),
       t(`The lock works like the Locked Item's: each box sent to a slot lowers the number by 1.`,
         `Khóa hoạt động giống Vật phẩm bị khóa: mỗi hộp được đưa lên ô thì con số giảm đi 1.`),
+      t(`The countdown only starts once the box reaches the front row. Boxes sent before that do not count.`,
+        `Con số chỉ bắt đầu đếm khi hộp đã lên tới hàng đầu. Các hộp được đưa lên trước đó không được tính.`),
       t(`When the number reaches 0, the box unlocks and can be sent up like a normal box.`,
         `Khi con số về 0, hộp mở khóa và được đưa lên ô như hộp thường.`),
       fsLine(`if boxes are still waiting in the queues but none in the front row can be sent up (for example, every front-row box is a Locked Box), the numbers can no longer drop. All locks are removed.`,
@@ -1242,6 +1246,13 @@ function view(l){
   /* ===== 8. Change note ===== */
   const day=(title,body)=>`<div class="sub"><h3><span>${title}</span></h3>${body}</div>`;
   B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, newest day first.','Các thay đổi của tài liệu này, ngày mới nhất ở trên cùng.')}</p>`+
+    day(t('22 October 2026','Ngày 22 tháng 10, 2026'),
+      ent(t('Elements','Yếu tố đặc biệt'),ul([
+        t(`Locked Item: the countdown only starts once the item enters the center conveyor.`,
+          `Vật phẩm bị khóa: con số chỉ bắt đầu đếm khi vật phẩm đã vào băng chuyền trung tâm.`),
+        t(`Locked Box: the countdown only starts once the box reaches the front row.`,
+          `Hộp bị khóa: con số chỉ bắt đầu đếm khi hộp đã lên tới hàng đầu.`)
+      ])))+
     day(t('21 October 2026','Ngày 21 tháng 10, 2026'),
       ent(t('Tutorial','Hướng dẫn'),ul([
         t(`Locked Box popup changed to “Send boxes to the slot / to unlock the box.”`,`Popup của Hộp bị khóa đổi thành “Send boxes to the slot / to unlock the box.”`)
