@@ -234,6 +234,8 @@ tbody tr:last-child>*{border-bottom:0}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 tr.grp th{background:var(--tint);font-weight:700;padding-block:8px}
 .tbl ul.bl{margin:0}
+.tbl.compact table{min-width:0}
+.gbox .tbl{margin:0;background:var(--surface)}
 .tbl ul.bl>li{margin:0 0 .3em}
 .offers tbody th{width:150px}
 .offers td{width:42%}
@@ -775,7 +777,14 @@ function view(l){
            <li>${t(`Lose a level and restart it`,`Thua màn và chơi lại màn đó`)}</li>
            <li>${t(`Choose to restart the level manually`,`Tự chọn chơi lại màn`)}</li>
            <li>${t(`Exit to the home screen`,`Thoát về màn hình chính`)}</li>
-         </ul>`))+
+         </ul>`)+
+      panel(t('Unlimited lives timer','Đồng hồ tim vô hạn'),
+        `<p>${t('While unlimited lives are active, the timer shows the time left in one of three formats:','Khi đang có tim vô hạn, đồng hồ hiện thời gian còn lại theo một trong ba dạng:')}</p>`+
+        table(t('Unlimited lives timer format','Định dạng đồng hồ tim vô hạn'),
+          [t('Time left','Thời gian còn lại'),t('Format','Định dạng'),t('Example','Ví dụ')],
+          [[t('≥ 1 day','≥ 1 ngày'),'<code>xxd</code>','<code>2d</code>'],
+           [t('≥ 1 hour','≥ 1 giờ'),'<code>xxh yym</code>','<code>12h 23m</code>'],
+           [t('< 1 hour','< 1 giờ'),'<code>mm:ss</code>','<code>15:12</code>']],'compact')))+
 
     sys(nm('Element unlock progress system','Thanh tiến độ mở khóa yếu tố'),
       lead(t(`A progress bar on the Victory screen that shows the player how many levels are left until the next element unlocks.`,
@@ -906,6 +915,8 @@ function view(l){
         `Cửa chặn và Hàng chờ bị chặn không bao giờ xuất hiện trong cùng một màn.`),
       t(`When a door opens, the items behind it move on and fill the empty spots on the center conveyor.`,
         `Khi cửa mở, các vật phẩm phía sau tiếp tục chạy vào lấp chỗ trống trên băng chuyền trung tâm.`),
+      t(`If one of the Enter Paths has sent all of its items, the doors are removed for the rest of the level.`,
+        `Nếu một trong các Đường vào đã hết vật phẩm, các cửa được gỡ bỏ cho tới hết màn.`),
       fsLine(`if every box has been sent up and a door is still shut, the countdown can no longer move. All locks are removed and every door opens.`,
              `nếu mọi hộp đã được đưa lên hết mà vẫn còn cửa đang đóng, con số không thể giảm tiếp. Khi đó mọi khóa được gỡ và tất cả cửa mở ra.`)
     ]),unlock(22),demo('door'))+
@@ -934,6 +945,8 @@ function view(l){
         `Khi con số về 0, hàng chờ bị chặn được mở và một hàng chờ khác bắt đầu bị chặn.`),
       t(`Block Door and Block Queue never appear in the same level.`,
         `Cửa chặn và Hàng chờ bị chặn không bao giờ xuất hiện trong cùng một màn.`),
+      t(`If one of the queues has sent up all of its boxes, the block is removed for the rest of the level.`,
+        `Nếu một trong các hàng chờ đã đưa hết hộp lên, vật chặn được gỡ bỏ cho tới hết màn.`),
       fsLine(`if no other queue can send a box (the other queues are empty, or their front-row boxes cannot be sent), the countdown can no longer move. All locks are removed and no queue stays blocked.`,
              `nếu không hàng chờ nào khác đưa được hộp lên (các hàng khác đã hết hộp, hoặc hộp ở hàng đầu của chúng không đưa lên được), con số không thể giảm tiếp. Khi đó mọi khóa được gỡ và không còn hàng chờ nào bị chặn.`)
     ]),unlock(32),demo('blockQueue'))+
@@ -1251,7 +1264,15 @@ function view(l){
         t(`Locked Item: the countdown only starts once the item enters the center conveyor.`,
           `Vật phẩm bị khóa: con số chỉ bắt đầu đếm khi vật phẩm đã vào băng chuyền trung tâm.`),
         t(`Locked Box: the countdown only starts once the box reaches the front row.`,
-          `Hộp bị khóa: con số chỉ bắt đầu đếm khi hộp đã lên tới hàng đầu.`)
+          `Hộp bị khóa: con số chỉ bắt đầu đếm khi hộp đã lên tới hàng đầu.`),
+        t(`Block Door: if one of the Enter Paths has sent all of its items, the doors are removed for the rest of the level.`,
+          `Cửa chặn: nếu một trong các Đường vào đã hết vật phẩm, các cửa được gỡ bỏ cho tới hết màn.`),
+        t(`Block Queue: if one of the queues has sent up all of its boxes, the block is removed for the rest of the level.`,
+          `Hàng chờ bị chặn: nếu một trong các hàng chờ đã đưa hết hộp lên, vật chặn được gỡ bỏ cho tới hết màn.`)
+      ]))+
+      ent(t('Additional mechanics','Cơ chế bổ sung'),ul([
+        t(`Heart system: added the unlimited lives timer format (2d, 12h 23m, 15:12).`,
+          `Hệ thống tim: thêm định dạng đồng hồ tim vô hạn (2d, 12h 23m, 15:12).`)
       ])))+
     day(t('21 October 2026','Ngày 21 tháng 10, 2026'),
       ent(t('Tutorial','Hướng dẫn'),ul([
