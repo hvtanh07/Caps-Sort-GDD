@@ -464,7 +464,7 @@ const SECTIONS=[
     {id:'element-object-concept',n:'3.3',en:'Element objects',vi:'Đối tượng yếu tố đặc biệt',wip:true},
     {id:'booster-object-concept',n:'3.4',en:'Booster objects',vi:'Đối tượng công cụ hỗ trợ',wip:true}]},
   {id:'sfx--haptics',n:'4',c:4,en:'SFX & haptics',vi:'Âm thanh & rung'},
-  {id:'remote-config',n:'5',c:5,en:'Remote config',vi:'Cấu hình từ xa',wip:true},
+  {id:'remote-config',n:'5',c:5,en:'Remote config',vi:'Cấu hình từ xa'},
   {id:'iap--offers',n:'6',c:8,en:'IAP & offers',vi:'Mua trong game & ưu đãi',subs:[
     {id:'offer-overview',n:'6.1',en:'Offer overview',vi:'Tổng quan ưu đãi'},
     {id:'session-start-popup',n:'6.2',en:'Session-start popup',vi:'Popup khi mở game'},
@@ -1243,7 +1243,7 @@ function view(l){
       t(`Starter Pack shows only during its 72-hour window (after its first popup). Hide it once bought or expired.`,`Gói Khởi đầu chỉ hiện trong 72 giờ (tính từ popup đầu tiên). Ẩn đi khi đã mua hoặc hết hạn.`),
       t(`Remove Ads Pack hides once bought.`,`Gói Gỡ quảng cáo ẩn đi khi đã mua.`),
       t(`Gold Packs and Special Packs always show and can be bought again and again.`,`Gói vàng và Gói đặc biệt luôn hiện và mua được nhiều lần.`),
-      t(`Show a “Best Value” tag on the 100,000 Gold pack and a “Hot” tag on Remove Ads.`,`Gắn nhãn “Best Value” cho gói 100.000 vàng và nhãn “Hot” cho gói Gỡ quảng cáo.`),
+      t(`Show a “60% Off” tag on the Starter Pack and a “Hot” tag on Remove Ads.`,`Gắn nhãn “60% Off” cho Gói Khởi đầu và nhãn “Hot” cho gói Gỡ quảng cáo.`),
       t(`After a successful purchase, play the reward animation (gold and boosters fly to the HUD), then update the counters.`,`Sau khi mua thành công, chạy hiệu ứng nhận thưởng (vàng và công cụ bay lên HUD), rồi cập nhật các con số.`),
       t(`If the purchase fails or is cancelled, close the loading state and keep the player in the store with nothing changed.`,`Nếu giao dịch lỗi hoặc bị hủy, tắt trạng thái đang tải và giữ người chơi ở cửa hàng, không thay đổi gì.`)
     ]));
@@ -1363,7 +1363,12 @@ function view(l){
           `Tổng quan ưu đãi, Popup khi mở game và Cửa hàng không còn Quà giới hạn thời gian. Lượt kiểm tra khi mở game giờ chỉ xét Gói Khởi đầu.`)
       ]))+
       ent(t('Remote config','Cấu hình từ xa'),ul([
-        t(`Removed garage_gift_unlock_level and skip_level_max_per_day.`,`Bỏ garage_gift_unlock_level và skip_level_max_per_day.`)
+        t(`Removed garage_gift_unlock_level and skip_level_max_per_day.`,`Bỏ garage_gift_unlock_level và skip_level_max_per_day.`),
+        t(`Remote config is no longer marked as in progress.`,`Cấu hình từ xa không còn gắn nhãn đang viết.`)
+      ]))+
+      ent(t('Store','Cửa hàng'),ul([
+        t(`Tags: “60% Off” on the Starter Pack and “Hot” on Remove Ads (was “Best Value” on the 100,000 Gold pack).`,
+          `Nhãn: “60% Off” cho Gói Khởi đầu và “Hot” cho Gỡ quảng cáo (trước đây là “Best Value” cho gói 100.000 vàng).`)
       ])))+
     day(t('22 October 2026','Ngày 22 tháng 10, 2026'),
       ent(t('Elements','Yếu tố đặc biệt'),ul([
