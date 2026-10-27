@@ -341,35 +341,6 @@ code{font:500 .9em/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;back
 .node ul.bl>li{margin-bottom:.2em}
 .gbox code,.state code{background:var(--paper)}
 
-/* ---------- live-ops state cards ---------- */
-.states{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
-.state{background:var(--tint);border-radius:12px;padding:12px 14px}
-.state .sn{margin:0 0 6px;font-weight:600;line-height:1.5}
-.state .sn small{display:block;font-weight:500;color:var(--muted);font-size:.86rem}
-.state>p{margin:0 0 8px}
-.go{list-style:none;margin:0;padding:8px 0 0;border-top:1px solid var(--line)}
-.go li{margin:0 0 .25em;padding-left:1.3em;text-indent:-1.3em}
-.go li::before{content:"→ ";color:var(--muted);font-weight:700}
-
-/* ---------- win-screen gauge ---------- */
-.gauge{max-width:400px}
-.gauge svg{display:block;width:100%;height:auto;overflow:visible}
-.gseg{stroke:var(--surface);stroke-width:2;transition:opacity .2s}
-.g2{fill:var(--c2)}.g3{fill:var(--c3)}.g5{fill:var(--c4)}
-.gauge.stopped .gseg:not(.on){opacity:.3}
-.gseg.on{stroke:var(--ink);stroke-width:3}
-.glab{font:800 17px var(--display);text-anchor:middle;fill:#fff;pointer-events:none}
-.glab.l{fill:#18203A}
-.needle{fill:var(--ink)}
-.hub{fill:var(--ink);stroke:var(--surface);stroke-width:3}
-.gbase{margin:6px 0 0;text-align:center;color:var(--muted);font-size:.9rem}
-.gctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:14px}
-.gctl>span{display:flex;align-items:center;gap:8px}
-.gctl .pinl{width:22px;height:22px;font-size:.8rem;line-height:23px}
-.gbtn{border:1.5px solid var(--ink);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 18px;font-weight:600;cursor:pointer;min-height:40px}
-.gbtn.primary{background:var(--ink);color:var(--paper)}
-.gres{margin:12px 0 0;font-weight:500;min-height:3.2em;max-width:52ch}
-.gres strong{font:800 1.15rem/1.2 var(--display)}
 
 /* ---------- search hits in the page ---------- */
 mark.hit{background:var(--mark);color:#18203A;border-radius:3px;padding:0 1px}
@@ -462,7 +433,6 @@ const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const GBASE=40;  /* win-screen base coin reward, matches level_win_coin */
 
 /* crown-cap outline: a real bottle cap has 21 teeth */
 (function(){
@@ -481,9 +451,8 @@ const SECTIONS=[
     {id:'gameplay-overview',n:'1.1',en:'Gameplay overview',vi:'Tổng quan lối chơi'},
     {id:'main-game-mechanics',n:'1.2',en:'Main game mechanics',vi:'Cơ chế chính'},
     {id:'additional-mechanics',n:'1.3',en:'Additional mechanics',vi:'Cơ chế bổ sung'},
-    {id:'win-screen-bonus',n:'1.4',en:'Win screen bonus',vi:'Thưởng thêm ở màn hình thắng'},
-    {id:'elements-mechanics',n:'1.5',en:'Elements',vi:'Yếu tố đặc biệt'},
-    {id:'booster-mechanics',n:'1.6',en:'Boosters',vi:'Công cụ hỗ trợ'}]},
+    {id:'elements-mechanics',n:'1.4',en:'Elements',vi:'Yếu tố đặc biệt'},
+    {id:'booster-mechanics',n:'1.5',en:'Boosters',vi:'Công cụ hỗ trợ'}]},
   {id:'ftue--tutorial',n:'2',c:2,en:'FTUE & tutorial',vi:'FTUE & hướng dẫn',subs:[
     {id:'ftue-logic',n:'2.1',en:'FTUE logic',vi:'Cách FTUE hoạt động'},
     {id:'ftue-steps',n:'2.2',en:'FTUE steps',vi:'Các bước FTUE'},
@@ -502,11 +471,7 @@ const SECTIONS=[
     {id:'starter-pack',n:'6.3',en:'Starter Pack',vi:'Gói Khởi đầu'},
     {id:'remove-ads',n:'6.4',en:'Remove Ads',vi:'Gỡ quảng cáo'},
     {id:'store',n:'6.5',en:'Store',vi:'Cửa hàng'}]},
-  {id:'live-ops',n:'7',c:6,en:'Live ops',vi:'Tính năng Live Ops',subs:[
-    {id:'limited-time-reward',n:'7.1',en:'Limited Time Reward',vi:'Quà giới hạn thời gian'},
-    {id:'skip-level',n:'7.2',en:'Skip Level',vi:'Bỏ qua màn'},
-    {id:'retry-with-booster',n:'7.3',en:'Retry with Booster',vi:'Chơi lại kèm công cụ'}]},
-  {id:'change-note',n:'8',c:7,en:'Change note',vi:'Ghi chú thay đổi'}
+  {id:'change-note',n:'7',c:7,en:'Change note',vi:'Ghi chú thay đổi'}
 ];
 const SEC={};
 SECTIONS.forEach(s=>{SEC[s.id]=s;(s.subs||[]).forEach(u=>{SEC[u.id]=u;});});
@@ -516,20 +481,12 @@ const UI={
       matches:n=>n===1?'1 match':n+' matches',none:q=>`No matches for “${q}”.`,tryShort:'Try a shorter or different word.',
       other:n=>(n===1?'1 match':n+' matches')+' in the Vietnamese version.',switchTo:'Switch to Tiếng Việt',
       tip:'Enter jumps to the next match. Esc clears.',overview:'Overview',wip:'In progress',
-      pause:'Pause motion',play:'Play motion',pauseDemo:'Pause demo',playDemo:'Play demo',title:'Caps Sorting GDD',
-      bonus:'Bonus',again:'Swing again',swing:'Swing',next:'Next level',
-      gTap:'Tap Bonus to stop the needle.',gStart:'Tap Swing to start the needle.',
-      gRes:m=>`<strong>×${m}</strong> → ${GBASE} × ${m} = ${GBASE*m} coins. In the game, the rewarded ad plays after a 1-second pause, then the coins fly in.`,
-      gNext:`<strong>${GBASE} coins</strong>. The player skips the bonus and takes the base reward.`},
+      pause:'Pause motion',play:'Play motion',pauseDemo:'Pause demo',playDemo:'Play demo',title:'Caps Sorting GDD'},
   vi:{sub:'Tài liệu thiết kế game',search:'Tìm trong tài liệu',searchShort:'Tìm kiếm',contents:'Mục lục',language:'Ngôn ngữ',clear:'Xóa tìm kiếm',
       matches:n=>n+' kết quả',none:q=>`Không tìm thấy “${q}”.`,tryShort:'Hãy thử từ khóa ngắn hơn hoặc từ khác.',
       other:n=>`Có ${n} kết quả trong bản tiếng Anh.`,switchTo:'Chuyển sang English',
       tip:'Nhấn Enter để tới kết quả kế tiếp. Nhấn Esc để xóa.',overview:'Tổng quan',wip:'Đang viết',
-      pause:'Dừng chuyển động',play:'Chạy chuyển động',pauseDemo:'Dừng minh họa',playDemo:'Chạy minh họa',title:'Caps Sorting GDD',
-      bonus:'Thưởng thêm',again:'Cho kim chạy lại',swing:'Cho kim chạy',next:'Màn tiếp theo',
-      gTap:'Chạm “Thưởng thêm” để dừng kim.',gStart:'Chạm “Cho kim chạy” để kim bắt đầu lắc.',
-      gRes:m=>`<strong>×${m}</strong> → ${GBASE} × ${m} = ${GBASE*m} xu. Trong game, quảng cáo có thưởng sẽ chạy sau 1 giây, rồi xu bay vào.`,
-      gNext:`<strong>${GBASE} xu</strong>. Người chơi bỏ qua phần thưởng thêm và nhận phần thưởng gốc.`}
+      pause:'Dừng chuyển động',play:'Chạy chuyển động',pauseDemo:'Dừng minh họa',playDemo:'Chạy minh họa',title:'Caps Sorting GDD'}
 };
 
 /* ---------- play-screen sketch ---------- */
@@ -715,57 +672,6 @@ function fieldSVG(label){
     <g class="part part-D">${front}${pin(26,340,'D')}</g>
     <g class="part part-E">${rest}${pin(26,409,'E')}</g>
   </svg>`;
-}
-
-/* ---------- win-screen bonus gauge ---------- */
-const MULT=[2,3,5,3,2],GX=130,GY=132,GR=112,Gr=60;
-const f1=n=>+(+n).toFixed(1);
-function gaugeSVG(label){
-  const P=(rad,deg)=>{const a=deg*Math.PI/180;return [f1(GX+rad*Math.cos(a)),f1(GY-rad*Math.sin(a))];};
-  let s='';
-  MULT.forEach((m,i)=>{
-    const a1=180-36*i,a2=180-36*(i+1);
-    const [x1,y1]=P(GR,a1),[x2,y2]=P(GR,a2),[x3,y3]=P(Gr,a2),[x4,y4]=P(Gr,a1);
-    s+=`<path class="gseg g${m}" data-seg="${i}" d="M${x1} ${y1}A${GR} ${GR} 0 0 1 ${x2} ${y2}L${x3} ${y3}A${Gr} ${Gr} 0 0 0 ${x4} ${y4}Z"/>`;
-    const [lx,ly]=P((GR+Gr)/2,(a1+a2)/2);
-    s+=`<text class="glab${m===5?' l':''}" x="${lx}" y="${ly}" dy=".35em">×${m}</text>`;
-  });
-  return `<svg viewBox="0 0 260 146" role="img" aria-label="${esc(label)}">${s}
-    <g id="needle"><path class="needle" d="M${GX-4} ${GY}L${GX} ${GY-GR+8}L${GX+4} ${GY}Z"/></g><circle class="hub" cx="${GX}" cy="${GY}" r="10"/>
-    ${pin(12,22,'A')}${pin(GX+28,GY+2,'B')}</svg>`;
-}
-const G={swing:!reduceMotion,th:0,t0:0,raf:0,res:null};
-const PERIOD=1.7,AMP=84;
-const segOf=th=>Math.max(0,Math.min(4,Math.floor((th+90)/36)));
-function gaugeMsg(l){
-  const ui=UI[l];
-  if(G.res==='bonus')return ui.gRes(MULT[segOf(G.th)]);
-  if(G.res==='next')return ui.gNext;
-  return G.swing?ui.gTap:ui.gStart;
-}
-function setNeedle(){const n=document.getElementById('needle');if(n)n.setAttribute('transform',`rotate(${G.th.toFixed(2)} ${GX} ${GY})`);}
-function gaugeTick(ts){
-  if(!G.swing){G.raf=0;return;}
-  if(!G.t0)G.t0=ts;
-  G.th=AMP*Math.sin((ts-G.t0)/1000*Math.PI*2/PERIOD);
-  setNeedle();
-  G.raf=requestAnimationFrame(gaugeTick);
-}
-function startSwing(){
-  const ph=Math.asin(Math.max(-1,Math.min(1,G.th/AMP)));
-  G.t0=performance.now()-ph/(Math.PI*2/PERIOD)*1000;
-  G.swing=true;
-  if(!G.raf)G.raf=requestAnimationFrame(gaugeTick);
-}
-function gaugeUI(){
-  const g=$('#gauge');if(!g)return;
-  const ui=UI[lang];
-  g.classList.toggle('stopped',!G.swing);
-  const on=!G.swing&&G.res==='bonus'?segOf(G.th):-1;
-  $$('.gseg',g).forEach(p=>p.classList.toggle('on',+p.dataset.seg===on));
-  const b=$('#gBonus');if(b)b.textContent=G.swing?ui.bonus:(G.res?ui.again:ui.swing);
-  const r=$('#gRes');if(r)r.innerHTML=gaugeMsg(lang);
-  setNeedle();
 }
 
 /* ---------- page content (English, Vietnamese) ---------- */
@@ -961,43 +867,6 @@ function view(l){
         t(`RV Slots can raise the number of available slots to a maximum of 6 per level.`,
           `Ô quảng cáo thưởng có thể tăng số ô dùng được lên tối đa 6 ô mỗi màn.`)
       ]));
-
-  B['win-screen-bonus']=
-    sys(nm('Bonus gauge','Đồng hồ thưởng'),
-      lead(t(`On the win screen, the player can multiply the level’s coin reward by watching a rewarded ad. A swinging needle picks the multiplier, which turns the ad into a small moment of timing and luck.`,
-             `Ở màn hình thắng, người chơi có thể nhân số xu thưởng của màn bằng cách xem một quảng cáo có thưởng. Một cây kim lắc qua lại sẽ chọn hệ số nhân, khiến việc xem quảng cáo giống một trò thử vận may nho nhỏ.`))+
-      panel(t('Try it','Thử ngay'),
-        `<div class="gauge${G.swing?'':' stopped'}" id="gauge">${gaugeSVG(t('Half-circle bonus gauge with five segments: ×2, ×3, ×5, ×3, ×2, and a needle from the bottom center.','Đồng hồ thưởng hình bán nguyệt gồm năm ô: ×2, ×3, ×5, ×3, ×2, kim nằm ở giữa phía dưới.'))}
-           <p class="gbase">${t(`Base reward: ${GBASE} coins`,`Phần thưởng gốc: ${GBASE} xu`)}</p></div>
-         <div class="gctl" data-nosearch>
-           <span><span class="pinl" aria-hidden="true">C</span><button type="button" class="gbtn primary" id="gBonus">${G.swing?ui.bonus:(G.res?ui.again:ui.swing)}</button></span>
-           <span><span class="pinl" aria-hidden="true">D</span><button type="button" class="gbtn" id="gNext">${ui.next}</button></span>
-         </div>
-         <p class="gres" id="gRes" aria-live="polite" data-nosearch>${gaugeMsg(l)}</p>`,
-        t('A sketch for trying the feel. Speed and odds here are not final.','Bản minh họa để thử cảm giác. Tốc độ và tỉ lệ ở đây chưa phải thông số chính thức.'))+
-      panel(t('Where it sits','Vị trí'),
-        kv([[t('Screen','Màn hình'),t(`Victory screen`,`Màn hình chiến thắng`)],
-            [t('Position','Chỗ đặt'),t(`Between the element unlock progress bar and the Bonus button.`,`Nằm giữa thanh tiến độ mở khóa yếu tố và nút Thưởng thêm (Bonus).`)]]))+
-      panel(t('Parts','Thành phần'),
-        `<ul class="parts">
-          <li><span class="pinl" data-nosearch>A</span><span><b>${nm('Bonus gauge','Đồng hồ thưởng')}</b><span class="d">${t(`A half circle split into 5 segments, left to right: ×2 | ×3 | ×5 | ×3 | ×2. The ×5 segment sits in the center.`,`Hình bán nguyệt chia thành 5 ô, từ trái sang phải: ×2 | ×3 | ×5 | ×3 | ×2. Ô ×5 nằm chính giữa.`)}</span></span></li>
-          <li><span class="pinl" data-nosearch>B</span><span><b>${nm('Needle','Kim chỉ')}</b><span class="d">${t(`Sits at the bottom center and keeps swinging left and right across the gauge.`,`Nằm ở giữa phía dưới, liên tục lắc qua trái rồi qua phải trên đồng hồ.`)}</span></span></li>
-          <li><span class="pinl" data-nosearch>C</span><span><b>${nm('Bonus button','Nút Thưởng thêm')}</b><span class="d">${t(`Has a video icon. Stops the needle and plays the rewarded ad.`,`Có biểu tượng video. Dừng kim lại và phát quảng cáo có thưởng.`)}</span></span></li>
-          <li><span class="pinl" data-nosearch>D</span><span><b>${nm('Next Level button','Nút Màn tiếp theo')}</b><span class="d">${t(`Skips the bonus. The player takes the base reward only.`,`Bỏ qua phần thưởng thêm. Người chơi chỉ nhận phần thưởng gốc.`)}</span></span></li>
-        </ul>`)+
-      panel(t('Flow','Diễn biến'),ol([
-        t(`The win screen opens and shows the base coin reward (for example ${GBASE}). The needle starts swinging.`,`Màn hình thắng mở ra và hiện số xu thưởng gốc (ví dụ ${GBASE}). Kim bắt đầu lắc.`),
-        t(`The moment the player taps <b>Bonus</b>, the needle stops. The segment it points at becomes this level’s multiplier.`,`Ngay khi người chơi chạm <b>Thưởng thêm</b>, kim dừng lại. Ô mà kim chỉ vào chính là hệ số nhân của màn này.`),
-        t(`After a 1-second pause so the player can see the result, the rewarded ad plays.`,`Sau 1 giây để người chơi kịp thấy kết quả, quảng cáo có thưởng bắt đầu chạy.`),
-        t(`When the ad ends, the reward animation plays with the multiplied amount (needle on ×3 → ${GBASE} × 3 = ${GBASE*3} coins).`,`Khi quảng cáo kết thúc, hiệu ứng nhận thưởng chạy với số xu đã nhân (kim dừng ở ×3 → ${GBASE} × 3 = ${GBASE*3} xu).`),
-        t(`If the player taps <b>Next Level</b> instead, they get the base reward and move on.`,`Nếu người chơi chạm <b>Màn tiếp theo</b>, họ nhận phần thưởng gốc và qua màn.`)
-      ]))+
-      panel(t('Edge cases','Trường hợp đặc biệt'),ul([
-        t(`Ad closed early or failed to load: the player gets the base reward only, with no multiplier.`,`Quảng cáo bị tắt sớm hoặc không tải được: người chơi chỉ nhận phần thưởng gốc, không được nhân.`),
-        t(`No ad available: the Bonus button looks disabled. The needle still swings but does nothing.`,`Không có quảng cáo: nút Thưởng thêm hiện ở trạng thái mờ. Kim vẫn lắc nhưng không có tác dụng.`),
-        t(`Daily ad limit for the multiplier reached: hide the gauge and the Bonus button, and re-center the rest of the screen.`,`Đã hết số lần xem quảng cáo nhân thưởng trong ngày: ẩn đồng hồ và nút Thưởng thêm, căn giữa lại phần còn lại của màn hình.`),
-        t(`Lock every input on the win screen during the 1-second pause and the ad, so double taps do nothing.`,`Khóa mọi thao tác trên màn hình thắng trong 1 giây chờ và lúc quảng cáo chạy, để chạm hai lần không gây lỗi.`)
-      ])+`<p class="note">${t(`Swing speed, each segment’s multiplier and the daily ad limit are remote config, so the chance of hitting ×5 can be tuned without a new build.`,`Tốc độ lắc của kim, hệ số của từng ô và giới hạn quảng cáo mỗi ngày đều nằm trong cấu hình từ xa, nên có thể chỉnh tỉ lệ trúng ×5 mà không cần ra bản mới.`)}</p>`));
 
   const DCAP={
     hidden:t('The box reaches the top of its queue and reveals its color.','Hộp lên tới đầu hàng chờ và hiện màu.'),
@@ -1336,16 +1205,12 @@ function view(l){
     ])+
     rc(t('Unlock popups — offer unlock level','Popup mở khóa — màn mở ưu đãi'),[
       ['starter_pack_unlock_level',t('Starter Pack (IAP) — level from which the offer popup can show','Gói Khởi đầu (IAP) — màn bắt đầu có thể hiện popup ưu đãi'),'12',t('level','màn')],
-      ['remove_ads_unlock_level',t('Remove Ads (IAP) — level from which the offer popup can show','Gỡ quảng cáo (IAP) — màn bắt đầu có thể hiện popup ưu đãi'),'15',t('level','màn')],
-      ['garage_gift_unlock_level',t('Limited Time Reward / Garage Gift (rewarded ad) — level from which the gift popup can show','Quà giới hạn thời gian / Garage Gift (quảng cáo thưởng) — màn bắt đầu có thể hiện popup quà'),'10',t('level','màn')]
-    ])+
-    rc(t('Live ops','Live Ops'),[
-      ['skip_level_max_per_day',t('Skip Level — max skips per day (ad or coins). The count resets each new day.','Bỏ qua màn — số lần bỏ qua tối đa mỗi ngày (bằng quảng cáo hoặc xu). Số lần được tính lại mỗi ngày mới.'),'3',t('count','lần')]
+      ['remove_ads_unlock_level',t('Remove Ads (IAP) — level from which the offer popup can show','Gỡ quảng cáo (IAP) — màn bắt đầu có thể hiện popup ưu đãi'),'15',t('level','màn')]
     ]);
 
   /* ===== 6. IAP & offers ===== */
-  B['iap--offers']=`<p class="sec-intro">${t(`In-app purchases, rewarded-ad gifts and the popups that offer them. Every unlock level in this section is remote config.`,
-    `Các gói mua trong game, quà nhận bằng quảng cáo có thưởng và các popup giới thiệu chúng. Mọi màn mở khóa trong mục này đều nằm trong cấu hình từ xa.`)}</p>`;
+  B['iap--offers']=`<p class="sec-intro">${t(`In-app purchases and the popups that offer them. Every unlock level in this section is remote config.`,
+    `Các gói mua trong game và các popup giới thiệu chúng. Mọi màn mở khóa trong mục này đều nằm trong cấu hình từ xa.`)}</p>`;
   const bx=n=>t(`${n}× each booster`,`Mỗi công cụ ×${n}`);
   const hr=n=>t(`${n} hour${n>1?'s':''}`,`${n} giờ`);
   const packs=[
@@ -1363,9 +1228,7 @@ function view(l){
     ['10,000 Gold','sushi.sort.coins_10K','10,000',dash,dash,dash,'$9.99','1,001'],
     ['25,000 Gold','sushi.sort.coins_25K','25,000',dash,dash,dash,'$24.99','1,000'],
     ['50,000 Gold','sushi.sort.coins_50K','50,000',dash,dash,dash,'$49.99','1,000'],
-    ['100,000 Gold','sushi.sort.coins_100K','100,000',dash,dash,dash,'$99.99','1,000'],
-    [t('Limited Time Reward','Quà giới hạn thời gian')],
-    ['Gold Brick Package!',dash,'200',t('1 booster','1 công cụ'),dash,t('Free gift for watching an ad (see 7.1)','Quà miễn phí khi xem quảng cáo (xem 7.1)'),t('Rewarded ad','Quảng cáo có thưởng'),dash]
+    ['100,000 Gold','sushi.sort.coins_100K','100,000',dash,dash,dash,'$99.99','1,000']
   ];
   const NUMC={2:1,6:1,7:1};
   const packHead=[t('Pack','Gói'),'ID',t('Gold','Vàng'),t('Boosters','Công cụ hỗ trợ'),t('Unlimited lives','Tim vô hạn'),t('Other benefit','Lợi ích khác'),t('Price (USD)','Giá (USD)'),t('Gold per $1','Vàng mỗi $1')];
@@ -1380,7 +1243,6 @@ function view(l){
       t(`Starter Pack shows only during its 72-hour window (after its first popup). Hide it once bought or expired.`,`Gói Khởi đầu chỉ hiện trong 72 giờ (tính từ popup đầu tiên). Ẩn đi khi đã mua hoặc hết hạn.`),
       t(`Remove Ads Pack hides once bought.`,`Gói Gỡ quảng cáo ẩn đi khi đã mua.`),
       t(`Gold Packs and Special Packs always show and can be bought again and again.`,`Gói vàng và Gói đặc biệt luôn hiện và mua được nhiều lần.`),
-      t(`The Limited Time Reward is not sold in the store. The row above only lists its contents.`,`Quà giới hạn thời gian không bán trong cửa hàng. Dòng ở bảng trên chỉ để liệt kê nội dung quà.`),
       t(`Show a “Best Value” tag on the 100,000 Gold pack and a “Hot” tag on Remove Ads.`,`Gắn nhãn “Best Value” cho gói 100.000 vàng và nhãn “Hot” cho gói Gỡ quảng cáo.`),
       t(`After a successful purchase, play the reward animation (gold and boosters fly to the HUD), then update the counters.`,`Sau khi mua thành công, chạy hiệu ứng nhận thưởng (vàng và công cụ bay lên HUD), rồi cập nhật các con số.`),
       t(`If the purchase fails or is cancelled, close the loading state and keep the player in the store with nothing changed.`,`Nếu giao dịch lỗi hoặc bị hủy, tắt trạng thái đang tải và giữ người chơi ở cửa hàng, không thay đổi gì.`)
@@ -1388,37 +1250,31 @@ function view(l){
 
   const arrow=`<div class="arrow" aria-hidden="true" data-nosearch>↓</div>`;
   const offerRows=[
-    [t('Unlock level','Màn mở khóa'),lvl(12),lvl(15),lvl(10)],
+    [t('Unlock level','Màn mở khóa'),lvl(12),lvl(15)],
     [t('Target player','Người chơi hướng tới'),
       t(`First-time spenders. High perceived value for $1.99.`,`Người chơi lần đầu bỏ tiền. Giá $1.99 nhưng nhận được nhiều.`),
-      t(`Engaged players who see a lot of ads. A utility purchase.`,`Người chơi gắn bó, gặp nhiều quảng cáo. Đây là gói mua vì tiện lợi.`),
-      t(`Engagement and retention. Free value through a rewarded ad.`,`Giữ chân và tăng tương tác. Quà miễn phí qua quảng cáo có thưởng.`)],
+      t(`Engaged players who see a lot of ads. A utility purchase.`,`Người chơi gắn bó, gặp nhiều quảng cáo. Đây là gói mua vì tiện lợi.`)],
     [t('Session start','Khi mở game'),
       t(`Pops up while its 72-hour countdown is running. It has the highest priority.`,`Hiện khi đồng hồ 72 giờ vẫn đang chạy. Đây là popup được ưu tiên cao nhất.`),
-      t(`Never. It sells poorly when the player hasn’t just seen an ad.`,`Không bao giờ hiện. Gói này khó bán khi người chơi vừa không gặp quảng cáo.`),
-      t(`Opens if the 4-hour cooldown has passed.`,`Hiện nếu đã qua 4 giờ chờ.`)],
+      t(`Never. It sells poorly when the player hasn’t just seen an ad.`,`Không bao giờ hiện. Gói này khó bán khi người chơi vừa không gặp quảng cáo.`)],
     [t('In-game triggers','Khi nào hiện trong game'),
       t(`The player opens the game after reaching level 12.`,`Người chơi mở game sau khi đã tới màn 12.`),
-      t(`Right after the player passes level 15 and sees their first interstitial ad. It shows again after more interstitials (see 6.4).`,`Ngay sau khi người chơi qua màn 15 và gặp quảng cáo xen kẽ đầu tiên. Sau đó hiện lại sau một số quảng cáo xen kẽ (xem 6.4).`),
-      ul([t(`Back to Home after completing a level.`,`Quay về màn hình chính sau khi hoàn thành một màn.`),t(`Completing a level while the claim timer is running.`,`Hoàn thành một màn khi đồng hồ nhận quà vẫn đang chạy.`)])],
+      t(`Right after the player passes level 15 and sees their first interstitial ad. It shows again after more interstitials (see 6.4).`,`Ngay sau khi người chơi qua màn 15 và gặp quảng cáo xen kẽ đầu tiên. Sau đó hiện lại sau một số quảng cáo xen kẽ (xem 6.4).`)],
     [t('In the store','Trong cửa hàng'),
       t(`Hidden until the first popup appears. The countdown starts with that popup.`,`Ẩn cho tới khi popup đầu tiên hiện ra. Đồng hồ đếm ngược bắt đầu từ popup đó.`),
-      t(`Always there and can be bought as normal. If bought before the popup, the popup never shows.`,`Luôn có trong cửa hàng và mua được như bình thường. Nếu đã mua trước khi popup hiện thì popup sẽ không bao giờ hiện.`),
-      t(`Not in the store.`,`Không có trong cửa hàng.`)],
+      t(`Always there and can be bought as normal. If bought before the popup, the popup never shows.`,`Luôn có trong cửa hàng và mua được như bình thường. Nếu đã mua trước khi popup hiện thì popup sẽ không bao giờ hiện.`)],
     [t('Icon','Biểu tượng'),
       t(`Hidden until the first popup appears.`,`Ẩn cho tới khi popup đầu tiên hiện ra.`),
-      t(`Hidden until the first popup appears.`,`Ẩn cho tới khi popup đầu tiên hiện ra.`),
-      t(`Only visible while the gift is waiting to be claimed.`,`Chỉ hiện khi đang có quà chờ nhận.`)],
+      t(`Hidden until the first popup appears.`,`Ẩn cho tới khi popup đầu tiên hiện ra.`)],
     [t('Expiry & cooldown','Hết hạn & thời gian chờ'),
       t(`Can only be bought within 72 hours. Gone for good once bought or expired.`,`Chỉ mua được trong 72 giờ. Biến mất hẳn khi đã mua hoặc hết hạn.`),
-      t(`Permanent. Hidden once bought.`,`Ưu đãi lâu dài. Ẩn đi khi đã mua.`),
-      t(`4 hours between gifts. 10 minutes to claim once it appears, then it disappears.`,`Mỗi lần quà cách nhau 4 giờ. Có 10 phút để nhận khi quà xuất hiện, sau đó quà biến mất.`)]
+      t(`Permanent. Hidden once bought.`,`Ưu đãi lâu dài. Ẩn đi khi đã mua.`)]
   ];
-  B['offer-overview']=table(t('Offer overview','Tổng quan ưu đãi'),[t('Detail','Chi tiết'),t('Starter Pack (IAP)','Gói Khởi đầu (IAP)'),t('Remove Ads (IAP)','Gỡ quảng cáo (IAP)'),t('Limited Time Reward (ad)','Quà giới hạn thời gian (quảng cáo)')],offerRows,'wide offers');
+  B['offer-overview']=table(t('Offer overview','Tổng quan ưu đãi'),[t('Detail','Chi tiết'),t('Starter Pack (IAP)','Gói Khởi đầu (IAP)'),t('Remove Ads (IAP)','Gỡ quảng cáo (IAP)')],offerRows,'wide offers');
 
   B['session-start-popup']=
-    `<p class="sec-intro">${t(`Only one popup can show when the game opens. The game checks the offers in this order and shows the first one that passes.`,
-      `Mỗi lần mở game chỉ hiện tối đa một popup. Trò chơi kiểm tra các ưu đãi theo thứ tự dưới đây và hiện popup đầu tiên thỏa điều kiện.`)}</p>
+    `<p class="sec-intro">${t(`Only one popup can show when the game opens. The game runs the check below.`,
+      `Mỗi lần mở game chỉ hiện tối đa một popup. Trò chơi kiểm tra theo các bước dưới đây.`)}</p>
      <div class="flow">
        <div class="node"><p><span class="k">${t('Step 1','Bước 1')}</span>${t(`The game opens and checks the player’s level.`,`Game mở ra và kiểm tra màn hiện tại của người chơi.`)}</p></div>
        ${arrow}
@@ -1429,15 +1285,6 @@ function view(l){
        ${arrow}
        <div class="split">
          <div class="node"><p class="cond"><span class="yn">${t('Yes','Có')}</span>${t(`Show the Starter Pack popup.`,`Hiện popup Gói Khởi đầu.`)}</p><p>${t('Stop here.','Dừng tại đây.')}</p></div>
-         <div class="node"><p class="cond"><span class="yn no">${t('No','Không')}</span>${t(`Go to step 3.`,`Chuyển sang bước 3.`)}</p></div>
-       </div>
-       ${arrow}
-       <div class="node"><p><span class="k">${t('Step 3 · Limited Time Reward','Bước 3 · Quà giới hạn thời gian')}</span></p><p class="cond">${t(`Is the Limited Time Reward ready? All must be true:`,`Quà giới hạn thời gian đã sẵn sàng chưa? Phải thỏa tất cả:`)}</p>${ul([
-         t(`Player level ≥ the Limited Time Reward unlock level (10)`,`Màn của người chơi ≥ màn mở Quà giới hạn thời gian (10)`),
-         t(`At least 4 hours since the last gift`,`Đã qua ít nhất 4 giờ kể từ lần quà trước`)])}</div>
-       ${arrow}
-       <div class="split">
-         <div class="node"><p class="cond"><span class="yn">${t('Yes','Có')}</span>${t(`Show the Limited Time Reward popup.`,`Hiện popup Quà giới hạn thời gian.`)}</p><p>${t('Stop here.','Dừng tại đây.')}</p></div>
          <div class="node"><p class="cond"><span class="yn no">${t('No','Không')}</span>${t(`Show nothing and go straight to the Home screen.`,`Không hiện gì, vào thẳng màn hình chính.`)}</p></div>
        </div>
      </div>`+
@@ -1501,75 +1348,23 @@ function view(l){
         [t('Product ID','Mã sản phẩm'),`<code>sushi.sort.remove_ads</code>`]
       ])));
 
-  /* ===== 7. Live ops ===== */
-  B['live-ops']=`<p class="sec-intro">${t(`Features that bring players back and help them past hard levels, mostly paid for with rewarded ads.`,
-    `Các tính năng giúp người chơi quay lại game và vượt qua màn khó, phần lớn đổi bằng quảng cáo có thưởng.`)}</p>`;
-  const st=(name,sub,desc,go)=>`<div class="state blk"><p class="sn"><span class="yn">${name}</span><small>${sub}</small></p><p>${desc}</p><ul class="go">${go.map(g=>`<li>${g}</li>`).join('')}</ul></div>`;
-  B['limited-time-reward']=
-    sys(nm('Limited Time Reward','Quà giới hạn thời gian'),
-      lead(t(`A free gift on a regular cycle, claimed by watching a rewarded ad. It gives players a reason to come back.`,`Món quà miễn phí lặp lại đều đặn, nhận bằng cách xem quảng cáo có thưởng. Đây là lý do để người chơi quay lại game.`))+
-      tiles([[`200 + 1`,t('Gold + booster (“Gold Brick Package!”)','Vàng + công cụ (“Gold Brick Package!”)')],[t('4 h','4 giờ'),t('Between gifts','Giữa hai lần quà')],[t('10 min','10 phút'),t('To claim','Để nhận quà')],[t('Level 10','Màn 10'),t('Unlocks (remote config)','Mở khóa (cấu hình từ xa)')]])+
-      panel(t('States','Các trạng thái'),`<div class="states">`+
-        st(t('Locked','Đang khóa'),t('Cooling down 4 h','Đang chờ 4 giờ'),
-           t(`No gift yet. The icon is hidden. The 4-hour cooldown counts down in real time.`,`Chưa có quà. Biểu tượng được ẩn. Thời gian chờ 4 giờ đếm ngược theo giờ thực.`),
-           [t(`Cooldown ends and a trigger happens → <b>Available</b>`,`Hết thời gian chờ và có sự kiện kích hoạt → <b>Sẵn sàng</b>`)])+
-        st(t('Available','Sẵn sàng'),t('Popup on screen','Popup đang mở'),
-           t(`The Limited Time Reward popup is open.`,`Popup Quà giới hạn thời gian đang hiện.`),
-           [t(`Player watches the ad and claims → <b>Claimed</b>`,`Người chơi xem quảng cáo và nhận quà → <b>Đã nhận</b>`),t(`Player closes the popup without claiming → <b>Pending</b>`,`Người chơi đóng popup mà không nhận → <b>Chờ nhận</b>`)])+
-        st(t('Claimed','Đã nhận'),t('Cooldown restarts','Bắt đầu chờ lại'),
-           t(`The reward is given with the reward animation.`,`Người chơi nhận quà kèm hiệu ứng nhận thưởng.`),
-           [t(`Straight back to <b>Locked</b>, with a new 4-hour cooldown`,`Quay lại <b>Đang khóa</b>, bắt đầu 4 giờ chờ mới`)])+
-        st(t('Pending','Chờ nhận'),t('HUD icon, 10-minute countdown','Biểu tượng trên HUD, đếm ngược 10 phút'),
-           t(`The gift icon shows on the HUD with a 10-minute countdown. Tapping it reopens the popup.`,`Biểu tượng quà hiện trên HUD kèm đồng hồ 10 phút. Chạm vào để mở lại popup.`),
-           [t(`Player reopens the popup and claims → <b>Claimed</b>`,`Người chơi mở lại popup và nhận quà → <b>Đã nhận</b>`),t(`10 minutes pass → icon disappears, back to <b>Locked</b> with a new 4-hour cooldown`,`Hết 10 phút → biểu tượng biến mất, quay lại <b>Đang khóa</b> với 4 giờ chờ mới`)])+
-        `</div>`)+
-      panel(t('When the popup can open','Khi nào popup có thể hiện'),ul([
-        t(`At session start, if the 4-hour cooldown has passed (following the order in 6.2).`,`Khi mở game, nếu đã qua 4 giờ chờ (theo thứ tự ở mục 6.2).`),
-        t(`When the player returns to Home after completing a level.`,`Khi người chơi quay về màn hình chính sau khi hoàn thành một màn.`),
-        t(`When the player completes a level while the 10-minute claim timer is still running, as a reminder.`,`Khi người chơi hoàn thành một màn trong lúc đồng hồ 10 phút vẫn còn chạy, để nhắc nhận quà.`)
-      ]))+
-      panel(t('Edge cases','Trường hợp đặc biệt'),ul([
-        t(`Ad closed early or failed: no reward. The gift stays as it was (Available or Pending), so the player can try again while there is time left.`,`Quảng cáo bị tắt sớm hoặc lỗi: không nhận được quà. Quà giữ nguyên trạng thái (Sẵn sàng hoặc Chờ nhận) để người chơi thử lại khi còn thời gian.`),
-        t(`The gift is not shown in the store.`,`Quà này không hiện trong cửa hàng.`)
-      ])));
-
-  B['skip-level']=defs([
-    [t('Unlock','Mở khóa'),t(`Level X. Set in remote config, not decided yet.`,`Màn X. Đặt trong cấu hình từ xa, chưa chốt.`)],
-    [t('When it shows','Khi nào hiện'),ul([
-      t(`The Skip Level button shows on the lose screen once the player has failed the same level a number of times in a row (remote config, default 3).`,`Nút Bỏ qua màn hiện ở màn hình thua khi người chơi đã thua cùng một màn nhiều lần liên tiếp (cấu hình từ xa, mặc định 3 lần).`),
-      t(`The fail count resets when the player completes or skips that level.`,`Số lần thua được tính lại từ đầu khi người chơi qua màn hoặc bỏ qua màn đó.`)])],
-    [t('Cost','Chi phí'),t(`Watch 1 rewarded ad, or pay coins (remote config).`,`Xem 1 quảng cáo có thưởng, hoặc trả bằng xu (cấu hình từ xa).`)],
-    [t('Result','Kết quả'),ul([
-      t(`The level counts as completed and the player moves on to the next one.`,`Màn được tính là đã qua và người chơi chuyển sang màn tiếp theo.`),
-      t(`A skipped level gives no coin reward and no win screen bonus.`,`Màn bị bỏ qua không có xu thưởng và không có đồng hồ thưởng thêm.`),
-      t(`It still counts toward the element unlock progress bar.`,`Màn này vẫn được tính vào thanh tiến độ mở khóa yếu tố.`),
-      t(`Skipping does not cost a life.`,`Bỏ qua màn không bị trừ tim.`)])],
-    [t('Limits','Giới hạn'),ul([
-      t(`FTUE levels and levels that introduce a new element or booster cannot be skipped.`,`Không được bỏ qua các màn FTUE và các màn giới thiệu yếu tố hoặc công cụ mới.`),
-      t(`At most 3 skips per day (<code>skip_level_max_per_day</code> in remote config). Every skip counts, whether paid with an ad or with coins.`,`Tối đa 3 lần bỏ qua mỗi ngày (<code>skip_level_max_per_day</code> trong cấu hình từ xa). Mọi lần bỏ qua đều được tính, dù trả bằng quảng cáo hay bằng xu.`),
-      t(`Once the player reaches the limit, the Skip Level button hides on the lose screen until the count resets.`,`Khi đã dùng hết số lần, nút Bỏ qua màn được ẩn ở màn hình thua cho tới khi số lần được tính lại.`),
-      t(`The count resets at the start of each new day, in the device’s local time.`,`Số lần được tính lại vào đầu mỗi ngày mới, theo giờ trên thiết bị.`),
-      t(`Ad closed early or failed: no skip, the attempt does not count toward the limit, and the player stays on the lose screen.`,`Quảng cáo bị tắt sớm hoặc lỗi: không được bỏ qua, lần đó không bị tính vào giới hạn, và người chơi vẫn ở màn hình thua.`)])]
-  ]);
-
-  B['retry-with-booster']=defs([
-    [t('Unlock','Mở khóa'),t(`After the first booster unlocks (remote config).`,`Sau khi công cụ hỗ trợ đầu tiên được mở (cấu hình từ xa).`)],
-    [t('When it shows','Khi nào hiện'),ul([
-      t(`On the lose screen, after the player has used up or declined the revive.`,`Ở màn hình thua, sau khi người chơi đã dùng hết hoặc từ chối hồi sinh.`),
-      t(`Optional rule (remote config): only show after the player has failed the same level a set number of times.`,`Quy tắc tùy chọn (cấu hình từ xa): chỉ hiện khi người chơi đã thua cùng một màn đủ số lần quy định.`)])],
-    [t('Cost','Chi phí'),t(`Watch 1 rewarded ad.`,`Xem 1 quảng cáo có thưởng.`)],
-    [t('Result','Kết quả'),ul([
-      t(`The level restarts with 1 free booster already selected, picked at random from the boosters the player has unlocked.`,`Màn chơi bắt đầu lại với 1 công cụ miễn phí đã được chọn sẵn, lấy ngẫu nhiên trong các công cụ người chơi đã mở.`),
-      t(`The free booster does not come from the player’s own stock. If it is not used in that attempt, it is lost.`,`Công cụ miễn phí này không trừ vào số công cụ người chơi đang có. Nếu không dùng trong lượt chơi đó, công cụ sẽ mất.`),
-      t(`Retrying still costs 1 life as usual, unless unlimited lives are active. With 0 lives, show the refill lives offer instead.`,`Chơi lại vẫn tốn 1 tim như bình thường, trừ khi đang có tim vô hạn. Nếu hết tim, hiện ưu đãi nạp tim thay vào đó.`)])],
-    [t('Limits','Giới hạn'),ul([
-      t(`A maximum number of uses per day (remote config). Once reached, the offer hides.`,`Có giới hạn số lần dùng mỗi ngày (cấu hình từ xa). Khi đạt giới hạn, ưu đãi được ẩn đi.`),
-      t(`Ad closed early or failed: no booster, and the normal lose screen options show.`,`Quảng cáo bị tắt sớm hoặc lỗi: không có công cụ, màn hình thua hiện các lựa chọn bình thường.`)])]
-  ]);
-
-  /* ===== 8. Change note ===== */
+  /* ===== 7. Change note ===== */
   const day=(title,body)=>`<div class="sub"><h3><span>${title}</span></h3>${body}</div>`;
   B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, newest day first.','Các thay đổi của tài liệu này, ngày mới nhất ở trên cùng.')}</p>`+
+    day(t('27 October 2026','Ngày 27 tháng 10, 2026'),
+      ent(t('Removed features','Bỏ các tính năng'),ul([
+        t(`Removed Win screen bonus, Limited Time Reward, Skip Level and Retry with Booster, because the game does not have them.`,
+          `Bỏ Thưởng thêm ở màn hình thắng, Quà giới hạn thời gian, Bỏ qua màn và Chơi lại kèm công cụ, vì game chưa có các tính năng này.`),
+        t(`Section 7, Live ops, is removed. Change note is now section 7. Elements is now 1.4 and Boosters is now 1.5.`,
+          `Bỏ mục 7, Live Ops. Ghi chú thay đổi giờ là mục 7. Yếu tố đặc biệt giờ là 1.4, Công cụ hỗ trợ giờ là 1.5.`)
+      ]))+
+      ent(t('IAP & offers','Mua trong game & ưu đãi'),ul([
+        t(`Offer overview, Session-start popup and Store no longer list the Limited Time Reward. The session-start check now only covers the Starter Pack.`,
+          `Tổng quan ưu đãi, Popup khi mở game và Cửa hàng không còn Quà giới hạn thời gian. Lượt kiểm tra khi mở game giờ chỉ xét Gói Khởi đầu.`)
+      ]))+
+      ent(t('Remote config','Cấu hình từ xa'),ul([
+        t(`Removed garage_gift_unlock_level and skip_level_max_per_day.`,`Bỏ garage_gift_unlock_level và skip_level_max_per_day.`)
+      ])))+
     day(t('22 October 2026','Ngày 22 tháng 10, 2026'),
       ent(t('Elements','Yếu tố đặc biệt'),ul([
         t(`Locked Item: the countdown only starts once the item enters the center conveyor.`,
@@ -1942,8 +1737,6 @@ function render(){
   runSearch(false);
   spy();
   startDemos();
-  gaugeUI();
-  if(G.swing&&!G.raf)G.raf=requestAnimationFrame(gaugeTick);
 }
 function setLang(l){
   if(l===lang||(l!=='en'&&l!=='vi'))return;
@@ -1981,12 +1774,6 @@ document.addEventListener('click',e=>{
   }
   const db=tg.closest('.demo-btn');
   if(db){const st=db.closest('.demo')._demo;const on=db.getAttribute('aria-pressed')!=='true';db.setAttribute('aria-pressed',on?'true':'false');db.setAttribute('aria-label',on?UI[lang].playDemo:UI[lang].pauseDemo);if(st){st.user=on;applyDemo(st);}return;}
-  if(tg.closest('#gBonus')){
-    if(G.swing){G.swing=false;G.res='bonus';}
-    else{G.res=null;startSwing();}
-    gaugeUI();return;
-  }
-  if(tg.closest('#gNext')){G.res='next';startSwing();gaugeUI();return;}
   const pb=tg.closest('#pauseBtn');
   if(pb){paused=!paused;$('#field').classList.toggle('paused',paused);pb.textContent=paused?UI[lang].play:UI[lang].pause;return;}
   const lg=tg.closest('.legend button');
