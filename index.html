@@ -1081,7 +1081,12 @@ function view(l){
       ]),
       withEl+':'+ul([
         t(`Linked Box: when shuffling, it stays in its original queue and never moves to another queue. If it is picked in step 2, it moves to the top of its own queue and the link breaks.`,
-          `Hộp liên kết: khi xáo trộn, hộp luôn nằm lại đúng hàng chờ ban đầu của nó, không chuyển sang hàng chờ khác. Nếu được chọn ở bước 2, hộp lên đầu hàng chờ của chính nó và liên kết được gỡ.`)
+          `Hộp liên kết: khi xáo trộn, hộp luôn nằm lại đúng hàng chờ ban đầu của nó, không chuyển sang hàng chờ khác. Nếu được chọn ở bước 2, hộp lên đầu hàng chờ của chính nó và liên kết được gỡ.`)+ul([
+          t(`Within each queue, the Linked Boxes keep their top-to-bottom order from before the shuffle. Other boxes can still move above, below or between them.`,
+            `Trong mỗi hàng chờ, các Hộp liên kết giữ nguyên thứ tự trên xuống dưới như trước khi xáo. Các hộp khác vẫn được xáo lên trên, xuống dưới hoặc chen vào giữa chúng.`),
+          t(`This stops two links from crossing. Example: if link A sits above link B in one queue, A stays above B in the other queue too. Crossed links can never reach the top together, so the level gets stuck.`,
+            `Quy tắc này giữ cho hai liên kết không bị đan chéo. Ví dụ: nếu liên kết A nằm trên liên kết B ở hàng chờ này thì ở hàng chờ kia A cũng vẫn nằm trên B. Hai liên kết đan chéo thì không bao giờ cùng lên đầu hàng được, khiến màn chơi bị kẹt.`)
+        ])
       ])
     ]),unlockB(8),demo('shuffle'))+
     ent(N.magnet,ul([
@@ -1399,7 +1404,9 @@ function view(l){
         t(`Magnet now has a short animated demo in Boosters (1.5), and its Booster objects animation is updated to match.`,
           `Nam châm giờ có hình minh họa động ngắn ở mục Công cụ hỗ trợ (1.5), và chuyển động ở Đối tượng công cụ hỗ trợ được cập nhật theo.`),
         t(`Hand and Shuffle also have a short animated demo in Boosters (1.5).`,
-          `Bàn tay và Xáo trộn cũng có hình minh họa động ngắn ở mục Công cụ hỗ trợ (1.5).`)
+          `Bàn tay và Xáo trộn cũng có hình minh họa động ngắn ở mục Công cụ hỗ trợ (1.5).`),
+        t(`Shuffle: Linked Boxes in each queue keep their top-to-bottom order, so two links can no longer cross and make the level unsolvable.`,
+          `Xáo trộn: các Hộp liên kết trong mỗi hàng chờ giữ nguyên thứ tự trên xuống dưới, để hai liên kết không còn bị đan chéo làm màn chơi không giải được.`)
       ]))+
       ent(t('Tutorial','Hướng dẫn'),ul([
         t(`Magnet popup changed to “Clear 1 box / from the slot”.`,
