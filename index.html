@@ -161,6 +161,9 @@ main{container-type:inline-size;padding:48px clamp(20px,5vw,64px) 30vh;width:100
 .door{fill:var(--door)}
 .smoke circle{fill:var(--line)}
 .lkslot{fill:var(--tint);stroke:var(--muted);stroke-width:1.6}
+.mbg{fill:var(--ink)}
+.mag{fill:none;stroke:var(--paper);stroke-width:4.5}
+.mtip{fill:none;stroke:var(--c1);stroke-width:4.5}
 .part{transition:opacity .18s ease}
 .field[data-hl] .part{opacity:.2}
 .field[data-hl="A"] .part-A,.field[data-hl="B"] .part-B,.field[data-hl="C"] .part-C,.field[data-hl="D"] .part-D,.field[data-hl="E"] .part-E{opacity:1}
@@ -632,6 +635,20 @@ const DEMOS={
       ['.q1a','transform',[[4.2,T(0,0)],[4.9,T(-4,-60)]]],
       ['.q1r','transform',[[5.1,T(0,0)],[5.5,T(0,-36)]]]
     ]},
+  magnet:{D:6.6,
+    svg:()=>`<rect class="trackfill" x="6" y="8" width="188" height="32" rx="16"/>`+
+      [[24,2],[72,3],[120,6],[144,8]].map(([x,c])=>`<circle class="f${c}" cx="${x}" cy="24" r="7"/>`).join('')+
+      [[48,'m0'],[96,'m1'],[168,'m2']].map(([x,k])=>`<circle class="f1 ${k}" cx="${x}" cy="24" r="7"/>`).join('')+
+      dslots(54)+mbox(20,56,2,3)+mbox(62,56,6,2)+`<g class="big">${mbox(104,56,1,5)}</g>`+mbox(146,56,4,4)+
+      `<g class="mbtn"><circle class="mbg" cx="100" cy="150" r="20"/><path class="mag" d="M92,141v9a8,8 0 0 0 16,0v-9"/><path class="mtip" d="M92,141v4M108,141v4"/></g>`,
+    tracks:()=>[
+      ['.mbtn','transform',[[.6,'scale(1)'],[.75,'scale(.86)'],[.95,'scale(1)']]],
+      ['.m0','transform',[[1.7,T(0,0)],[2.4,T(73,48,.5)]]],['.m0','opacity',[[0,1],[2.3,1],[2.45,0]]],
+      ['.m1','transform',[[1.9,T(0,0)],[2.5,T(25,48,.5)]]],['.m1','opacity',[[0,1],[2.4,1],[2.55,0]]],
+      ['.m2','transform',[[2.1,T(0,0)],[2.8,T(-47,48,.5)]]],['.m2','opacity',[[0,1],[2.7,1],[2.85,0]]],
+      ['.big','transform',[[1.1,T(0,0)],[1.4,T(0,0,1.12)],[1.6,T(0,0)],[3.0,T(0,0)],[3.2,T(0,0,1.12)],[3.5,T(0,0,.2)]]],
+      ['.big','opacity',[[0,1],[3.3,1],[3.5,0]]]
+    ]},
   lockedSlot:{D:7.6,
     svg:()=>dslots(12)+
       `<g class="lk"><rect class="lkslot" x="61" y="12" width="36" height="36" rx="8"/>${padlock(79,29,true)}${cdBadge(97,12)}</g>`+
@@ -880,6 +897,7 @@ function view(l){
     door:t('Two boxes are sent, the number hits 0 and the doors swap.','Đưa 2 hộp lên, con số về 0 và hai cửa đổi trạng thái.'),
     lockedBox:t('Other boxes are sent until the number hits 0, then the box can go up.','Đưa các hộp khác lên tới khi con số về 0, sau đó hộp được đưa lên.'),
     blockQueue:t('Other queues send two boxes, then the block moves to another queue.','Các hàng khác đưa 2 hộp lên, sau đó vật chặn chuyển sang hàng khác.'),
+    magnet:t('Magnet is used. The biggest box in the slots pulls in its items and clears.','Dùng Nam châm. Hộp lớn nhất trong ô hút đủ vật phẩm rồi biến mất.'),
     lockedSlot:t('A box skips the locked slot. When the number hits 0, the slot opens.','Hộp bỏ qua ô bị khóa. Khi con số về 0, ô được mở.')
   };
   const demo=k=>`<figure class="demo" data-demo="${k}"><div class="demo-box"><svg viewBox="0 0 200 196" role="img" aria-label="${esc(DCAP[k])}"><g class="scene">${DEMOS[k].svg()}</g></svg>`+
@@ -1033,10 +1051,12 @@ function view(l){
       ])
     ]),unlockB(8))+
     ent(N.magnet,ul([
-      t(`Lets the player pick any box in the slots and remove it immediately.`,
-        `Cho phép người chơi chọn bất kỳ hộp nào đang nằm trong ô để dọn hộp đó ngay lập tức.`),
-      t(`Only boxes in the slots can be picked, not boxes in the queues.`,
-        `Chỉ chọn được hộp đang nằm trong ô, không chọn được hộp trong hàng chờ.`),
+      t(`Clears 1 box in the slots immediately. The player does not pick the box: the game picks it.`,
+        `Dọn ngay 1 hộp đang nằm trong ô. Người chơi không tự chọn hộp, trò chơi sẽ tự chọn.`),
+      t(`The game picks the biggest box currently in the slots, meaning the box with the largest capacity. If several boxes share the largest capacity, the one in the leftmost slot is picked.`,
+        `Trò chơi chọn hộp lớn nhất đang nằm trong ô, tức là hộp có sức chứa lớn nhất. Nếu nhiều hộp cùng sức chứa lớn nhất thì chọn hộp ở ô ngoài cùng bên trái.`),
+      t(`Only boxes in the slots count, not boxes in the queues. If the slots are empty, the booster cannot be used.`,
+        `Chỉ xét hộp đang nằm trong ô, không xét hộp trong hàng chờ. Nếu các ô đang trống thì không dùng được công cụ.`),
       t(`When triggered, the chosen box pulls in matching-color items and packs them. It takes exactly as many items as it still needs to be full, then clears and frees its slot.`,
         `Khi dùng, hộp được chọn hút các vật phẩm cùng màu vào, lấy đúng số còn thiếu để hộp đầy. Sau đó hộp biến mất và nhường lại ô.`),
       withEl+':'+ul([
@@ -1044,7 +1064,7 @@ function view(l){
         t(`Hidden Box and Linked Box: not affected. A box that is already in the slots has revealed its color and broken its link.`,
           `Hộp ẩn và Hộp liên kết: không bị ảnh hưởng, vì hộp đã lên ô thì đã hiện màu và đã gỡ liên kết.`)
       ])
-    ]),unlockB(10));
+    ]),unlockB(10),demo('magnet'));
 
   /* ===== 2. FTUE & tutorial ===== */
   B['ftue--tutorial']=`<p class="sec-intro">${t(
@@ -1097,7 +1117,7 @@ function view(l){
     [
       [N.hand,popup('Pick any box<br>in the queue!','Chọn bất kỳ hộp nào<br>trong hàng chờ!'),lvl(5),lvl(3)],
       [N.shuffle,popup('Shuffle the boxes<br>in queues!','Xáo trộn các hộp<br>trong hàng chờ!'),lvl(8),lvl(3)],
-      [N.magnet,popup('Tap the box<br>to sort it instantly!','Chạm vào hộp<br>để xếp xong ngay!'),lvl(10),lvl(3)]
+      [N.magnet,popup('Clear 1 box<br>from the slot','Dọn 1 hộp<br>khỏi ô'),lvl(10),lvl(3)]
     ]);
 
   const stops=[
@@ -1146,7 +1166,7 @@ function view(l){
   B['booster-object-concept']=
     ent(N.hand,params([[an,t('When the booster is activated, the camera shifts down to show at least 8 rows of the queues.','Khi dùng công cụ, camera dịch xuống để hiện ít nhất 8 hàng hộp trong hàng chờ.')+' '+t('The chosen box lifts up, moves to the front, then pulls in all the matching-color items and packs them.','Hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút hết các vật phẩm cùng màu vào.')]]))+
     ent(N.shuffle,params([[an,shift+' '+t('The shuffle animation plays, then the screen moves back up.','Hiệu ứng xáo trộn chạy xong thì màn hình trượt về vị trí cũ.')]]))+
-    ent(N.magnet,params([[an,t('The chosen box in the slots pulls in all the matching-color items and packs them, then clears.','Hộp được chọn trong ô hút hết các vật phẩm cùng màu vào rồi biến mất.')]]));
+    ent(N.magnet,params([[an,t('The biggest box in the slots pulses to show it was picked, pulls in the matching-color items it still needs and packs them, then clears and frees its slot.','Hộp lớn nhất trong ô phóng to nhẹ để báo đã được chọn, hút đủ số vật phẩm cùng màu còn thiếu vào, rồi biến mất và nhường lại ô.')]]));
 
   /* ===== 4. SFX & haptics ===== */
   const cat={ui:t('UI','Giao diện (UI)'),core:t('Core game SFX','Lối chơi chính'),el:t('Element SFX','Yếu tố đặc biệt'),bo:t('Booster SFX','Công cụ hỗ trợ')};
@@ -1338,6 +1358,17 @@ function view(l){
   /* ===== 7. Change note ===== */
   const day=(title,body)=>`<div class="sub"><h3><span>${title}</span></h3>${body}</div>`;
   B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, newest day first.','Các thay đổi của tài liệu này, ngày mới nhất ở trên cùng.')}</p>`+
+    day(t('29 October 2026','Ngày 29 tháng 10, 2026'),
+      ent(t('Boosters','Công cụ hỗ trợ'),ul([
+        t(`Magnet: the player no longer picks a box. The game picks the biggest box in the slots and clears it.`,
+          `Nam châm: người chơi không còn tự chọn hộp. Trò chơi tự chọn hộp lớn nhất trong ô và dọn hộp đó.`),
+        t(`Magnet now has a short animated demo in Boosters (1.5), and its Booster objects animation is updated to match.`,
+          `Nam châm giờ có hình minh họa động ngắn ở mục Công cụ hỗ trợ (1.5), và chuyển động ở Đối tượng công cụ hỗ trợ được cập nhật theo.`)
+      ]))+
+      ent(t('Tutorial','Hướng dẫn'),ul([
+        t(`Magnet popup changed to “Clear 1 box / from the slot”.`,
+          `Popup của Nam châm đổi thành “Clear 1 box / from the slot”.`)
+      ])))+
     day(t('27 October 2026','Ngày 27 tháng 10, 2026'),
       ent(t('Removed features','Bỏ các tính năng'),ul([
         t(`Removed Win screen bonus, Limited Time Reward, Skip Level and Retry with Booster, because the game does not have them.`,
