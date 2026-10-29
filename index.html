@@ -163,6 +163,7 @@ main{container-type:inline-size;padding:48px clamp(20px,5vw,64px) 30vh;width:100
 .lkslot{fill:var(--tint);stroke:var(--muted);stroke-width:1.6}
 .mbg{fill:var(--ink)}
 .mag{fill:none;stroke:var(--paper);stroke-width:4.5}
+.mag.th{stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .mtip{fill:none;stroke:var(--c1);stroke-width:4.5}
 .part{transition:opacity .18s ease}
 .field[data-hl] .part{opacity:.2}
@@ -635,6 +636,37 @@ const DEMOS={
       ['.q1a','transform',[[4.2,T(0,0)],[4.9,T(-4,-60)]]],
       ['.q1r','transform',[[5.1,T(0,0)],[5.5,T(0,-36)]]]
     ]},
+  hand:{D:6.6,
+    svg:()=>`<rect class="trackfill" x="6" y="4" width="188" height="32" rx="16"/>`+
+      [[24,2],[48,3],[96,6],[120,3],[144,8],[168,3]].map(([x,c],i)=>`<circle class="f${c}${c===3?' h'+i:''}" cx="${x}" cy="20" r="7"/>`).join('')+
+      mbox(40,52,1,3)+mbox(83,52,5,2)+mbox(126,52,4,4)+mbox(40,88,7,2)+mbox(83,88,2,5)+mbox(126,88,6,3)+mbox(40,124,8,4)+mbox(126,124,2,2)+
+      `<g class="pick">${mbox(83,124,3,4)}</g>`+
+      `<g class="bbtn"><circle class="mbg" cx="100" cy="177" r="16"/><path class="mag" d="M96,180v-12a2.6,2.6 0 0 1 5.2,0v9"/><path class="mag" d="M93,180a7,7 0 0 0 14,0v-4"/></g>`,
+    tracks:()=>[
+      ['.bbtn','transform',[[.6,'scale(1)'],[.75,'scale(.86)'],[.95,'scale(1)']]],
+      ['.pick','transform',[[1.1,T(0,0)],[1.4,T(0,0,1.15)],[2.0,T(0,-42,1.25)],[3.3,T(0,-42,1.25)],[3.5,T(0,-42,1.38)],[3.8,T(0,-42,.2)]]],
+      ['.h1','transform',[[2.1,T(0,0)],[2.7,T(52,78,.5)]]],['.h1','opacity',[[0,1],[2.6,1],[2.75,0]]],
+      ['.h3','transform',[[2.3,T(0,0)],[2.9,T(-20,78,.5)]]],['.h3','opacity',[[0,1],[2.8,1],[2.95,0]]],
+      ['.h5','transform',[[2.5,T(0,0)],[3.1,T(-68,78,.5)]]],['.h5','opacity',[[0,1],[3.0,1],[3.15,0]]],
+      ['.pick','opacity',[[0,1],[3.6,1],[3.8,0]]]
+    ]},
+  shuffle:{D:6.4,
+    svg:()=>`<rect class="trackfill" x="6" y="4" width="188" height="32" rx="16"/>`+
+      [[24,2],[48,5],[72,2],[96,7],[120,5],[144,2],[168,8]].map(([x,c])=>`<circle class="f${c}" cx="${x}" cy="20" r="7"/>`).join('')+
+      `<g class="sh0">${mbox(126,124,2,5)}</g>`+`<g class="sh1">${mbox(83,88,5,3)}</g>`+`<g class="sh2">${mbox(40,124,7,4)}</g>`+`<g class="sh3">${mbox(40,52,1,2)}</g>`+`<g class="sh4">${mbox(83,52,4,3)}</g>`+`<g class="sh5">${mbox(126,52,8,2)}</g>`+`<g class="sh6">${mbox(40,88,3,4)}</g>`+`<g class="sh7">${mbox(83,124,6,5)}</g>`+`<g class="sh8">${mbox(126,88,1,3)}</g>`+
+      `<g class="bbtn"><circle class="mbg" cx="100" cy="177" r="16"/><path class="mag th" d="M90,172h5l10,10h5M90,182h5l10,-10h5"/></g>`,
+    tracks:()=>[
+      ['.bbtn','transform',[[.6,'scale(1)'],[.75,'scale(.86)'],[.95,'scale(1)']]],
+      ['.sh0','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.10,T(-86,-72,.85)],[2.40,T(-86,-72,1)]]],
+      ['.sh1','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.14,T(0,-36,.85)],[2.44,T(0,-36,1)]]],
+      ['.sh2','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.18,T(86,-72,.85)],[2.48,T(86,-72,1)]]],
+      ['.sh3','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.22,T(43,72,.85)],[2.52,T(43,72,1)]]],
+      ['.sh4','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.26,T(-43,36,.85)],[2.56,T(-43,36,1)]]],
+      ['.sh5','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.30,T(0,72,.85)],[2.60,T(0,72,1)]]],
+      ['.sh6','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.34,T(86,0,.85)],[2.64,T(86,0,1)]]],
+      ['.sh7','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.38,T(-43,0,.85)],[2.68,T(-43,0,1)]]],
+      ['.sh8','transform',[[1.1,T(0,0,1)],[1.4,T(0,0,.85)],[2.42,T(-43,0,.85)],[2.72,T(-43,0,1)]]]
+    ]},
   magnet:{D:6.6,
     svg:()=>`<rect class="trackfill" x="6" y="8" width="188" height="32" rx="16"/>`+
       [[24,2],[72,3],[120,6],[144,8]].map(([x,c])=>`<circle class="f${c}" cx="${x}" cy="24" r="7"/>`).join('')+
@@ -897,6 +929,8 @@ function view(l){
     door:t('Two boxes are sent, the number hits 0 and the doors swap.','Đưa 2 hộp lên, con số về 0 và hai cửa đổi trạng thái.'),
     lockedBox:t('Other boxes are sent until the number hits 0, then the box can go up.','Đưa các hộp khác lên tới khi con số về 0, sau đó hộp được đưa lên.'),
     blockQueue:t('Other queues send two boxes, then the block moves to another queue.','Các hàng khác đưa 2 hộp lên, sau đó vật chặn chuyển sang hàng khác.'),
+    hand:t('Hand picks a box deep in the queue. It lifts out, pulls in its items and clears.','Bàn tay chọn một hộp nằm sâu trong hàng chờ. Hộp nhấc lên, hút đủ vật phẩm rồi biến mất.'),
+    shuffle:t('Shuffle moves boxes of the conveyor\'s top colors to the front, then mixes the rest.','Xáo trộn đưa hộp có màu nhiều nhất trên băng chuyền lên đầu hàng, rồi xáo các hộp còn lại.'),
     magnet:t('Magnet is used. The biggest box in the slots pulls in its items and clears.','Dùng Nam châm. Hộp lớn nhất trong ô hút đủ vật phẩm rồi biến mất.'),
     lockedSlot:t('A box skips the locked slot. When the number hits 0, the slot opens.','Hộp bỏ qua ô bị khóa. Khi con số về 0, ô được mở.')
   };
@@ -1027,7 +1061,7 @@ function view(l){
       t(`When triggered, the chosen box lifts up, moves to the front, then pulls in matching-color items and packs them. It takes exactly as many items as it needs to be full.`,
         `Khi dùng, hộp được chọn nhấc lên, di chuyển ra phía trước rồi hút các vật phẩm cùng màu vào. Số vật phẩm hút vào bằng đúng số còn thiếu để hộp đầy.`),
       withEl+':'+ul([hbReveal,lbBreak,itemOrder])
-    ]),unlockB(5))+
+    ]),unlockB(5),demo('hand'))+
     ent(N.shuffle,ul([
       t(`Shuffles the boxes in the queues. Before shuffling, the game does the following in order:`,
         `Xáo lại thứ tự các hộp trong các hàng chờ. Trước khi xáo, trò chơi làm lần lượt các bước sau:`)+ol([
@@ -1049,7 +1083,7 @@ function view(l){
         t(`Linked Box: when shuffling, it stays in its original queue and never moves to another queue. If it is picked in step 2, it moves to the top of its own queue and the link breaks.`,
           `Hộp liên kết: khi xáo trộn, hộp luôn nằm lại đúng hàng chờ ban đầu của nó, không chuyển sang hàng chờ khác. Nếu được chọn ở bước 2, hộp lên đầu hàng chờ của chính nó và liên kết được gỡ.`)
       ])
-    ]),unlockB(8))+
+    ]),unlockB(8),demo('shuffle'))+
     ent(N.magnet,ul([
       t(`Clears 1 box in the slots immediately. The player does not pick the box: the game picks it.`,
         `Dọn ngay 1 hộp đang nằm trong ô. Người chơi không tự chọn hộp, trò chơi sẽ tự chọn.`),
@@ -1363,7 +1397,9 @@ function view(l){
         t(`Magnet: the player no longer picks a box. The game picks the biggest box in the slots and clears it.`,
           `Nam châm: người chơi không còn tự chọn hộp. Trò chơi tự chọn hộp lớn nhất trong ô và dọn hộp đó.`),
         t(`Magnet now has a short animated demo in Boosters (1.5), and its Booster objects animation is updated to match.`,
-          `Nam châm giờ có hình minh họa động ngắn ở mục Công cụ hỗ trợ (1.5), và chuyển động ở Đối tượng công cụ hỗ trợ được cập nhật theo.`)
+          `Nam châm giờ có hình minh họa động ngắn ở mục Công cụ hỗ trợ (1.5), và chuyển động ở Đối tượng công cụ hỗ trợ được cập nhật theo.`),
+        t(`Hand and Shuffle also have a short animated demo in Boosters (1.5).`,
+          `Bàn tay và Xáo trộn cũng có hình minh họa động ngắn ở mục Công cụ hỗ trợ (1.5).`)
       ]))+
       ent(t('Tutorial','Hướng dẫn'),ul([
         t(`Magnet popup changed to “Clear 1 box / from the slot”.`,
