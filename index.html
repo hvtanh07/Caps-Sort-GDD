@@ -1154,9 +1154,9 @@ function view(l){
   B['booster-tutorial']=table(t('Booster tutorial','Hướng dẫn công cụ hỗ trợ'),
     [t('Booster','Công cụ'),t('Popup text','Nội dung popup'),t('Unlocks at level','Mở ở màn'),t('Free boosters','Số lượt tặng')],
     [
-      [N.hand,popup('Pick a box<br>from any queue','Chọn một hộp<br>từ bất kỳ hàng chờ nào'),lvl(5),lvl(3)],
-      [N.shuffle,popup('Shuffle<br>all boxes','Xáo trộn<br>tất cả các hộp'),lvl(8),lvl(3)],
-      [N.magnet,popup('Clear one box<br>from the slot','Dọn một hộp<br>khỏi ô'),lvl(10),lvl(3)]
+      [N.hand,popup('Pick a box from any queue','Chọn một hộp từ bất kỳ hàng chờ nào'),lvl(5),lvl(3)],
+      [N.shuffle,popup('Shuffle all boxes','Xáo trộn tất cả các hộp'),lvl(8),lvl(3)],
+      [N.magnet,popup('Clear one box from the slot','Dọn một hộp khỏi ô'),lvl(10),lvl(3)]
     ]);
 
   const stops=[
@@ -1399,8 +1399,8 @@ function view(l){
   B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, newest day first.','Các thay đổi của tài liệu này, ngày mới nhất ở trên cùng.')}</p>`+
     day(t('1 November 2026','Ngày 1 tháng 11, 2026'),
       ent(t('Tutorial','Hướng dẫn'),ul([
-        t(`Booster tutorial popups changed: Hand “Pick a box / from any queue”, Shuffle “Shuffle / all boxes”, Magnet “Clear one box / from the slot”.`,
-          `Đổi popup hướng dẫn công cụ: Bàn tay “Pick a box / from any queue”, Xáo trộn “Shuffle / all boxes”, Nam châm “Clear one box / from the slot”.`)
+        t(`Booster tutorial popups changed: Hand “Pick a box from any queue”, Shuffle “Shuffle all boxes”, Magnet “Clear one box from the slot”, each on a single line.`,
+          `Đổi popup hướng dẫn công cụ: Bàn tay “Pick a box from any queue”, Xáo trộn “Shuffle all boxes”, Nam châm “Clear one box from the slot”, mỗi popup nằm trên một dòng.`)
       ])))+
     day(t('29 October 2026','Ngày 29 tháng 10, 2026'),
       ent(t('Boosters','Công cụ hỗ trợ'),ul([
