@@ -247,6 +247,13 @@ tr.grp th{background:var(--tint);font-weight:700;padding-block:8px}
 .pops td:nth-child(4),.pops td:nth-child(5),.pops td:nth-child(6){min-width:170px}
 .pops code{font-size:.82em}
 .lvl{font:800 1.35rem/1.1 var(--display)}
+.lvcfg table{min-width:760px}
+.lvcfg th,.lvcfg td{padding:9px 10px;text-align:center;white-space:nowrap}
+.lvcfg thead th{white-space:normal;vertical-align:bottom}
+.lvcfg tbody th{font-variant-numeric:tabular-nums}
+.lvcfg tr.hard>*{background:var(--tint)}
+.lvcfg .on{font-weight:700}
+.lvcfg .hd{font-weight:700}
 .dash{color:var(--muted)}
 .popup{display:inline-block;white-space:nowrap;font:700 1.02rem/1.25 var(--display);border:2px solid var(--ink);border-radius:12px;padding:6px 13px;text-align:center}
 .gloss{display:block;white-space:nowrap;color:var(--muted);font-size:.87rem;line-height:1.4;margin-top:6px}
@@ -480,7 +487,8 @@ const SECTIONS=[
     {id:'remove-ads',n:'6.4',en:'Remove Ads',vi:'Gỡ quảng cáo'},
     {id:'popup-list',n:'6.5',en:'Popup list',vi:'Danh sách popup'},
     {id:'popup-priority',n:'6.6',en:'Popup priority',vi:'Thứ tự ưu tiên popup'}]},
-  {id:'change-note',n:'7',c:7,en:'Change note',vi:'Ghi chú thay đổi'}
+  {id:'level-config',n:'7',c:6,en:'Level config',vi:'Cấu hình màn chơi'},
+  {id:'change-note',n:'8',c:7,en:'Change note',vi:'Ghi chú thay đổi'}
 ];
 const SEC={};
 SECTIONS.forEach(s=>{SEC[s.id]=s;(s.subs||[]).forEach(u=>{SEC[u.id]=u;});});
@@ -1394,9 +1402,71 @@ function view(l){
         [t('Product ID','Mã sản phẩm'),pid('remove_ads')]
       ]));
 
-  /* ===== 7. Change note ===== */
+  /* ===== 7. Level config ===== */
+  /* features used by each level, in level order (1–40). H Hidden Box, LB Locked Box, LK Linked Box, BD Block Door, LI Locked Item, BQ Block Queue */
+  const LVL=[
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    ['H'],
+    ['H'],
+    [],
+    ['H','HARD'],
+    [],
+    ['LB'],
+    ['LB'],
+    ['H'],
+    ['LB','HARD'],
+    [],
+    ['LK'],
+    ['H','LK'],
+    ['LB'],
+    ['LB','LK','HARD'],
+    [],
+    ['BD'],
+    ['H','BD'],
+    ['LK'],
+    ['LB','BD','HARD'],
+    ['LK','BD'],
+    ['LI'],
+    ['H','LI'],
+    [],
+    ['H','LB','LI','HARD'],
+    ['LI'],
+    ['BQ'],
+    ['BQ'],
+    ['LK'],
+    ['H','LB','BQ','HARD'],
+    [],
+    ['H','BD'],
+    ['LK','BQ'],
+    ['LK','LI'],
+    ['H','LB','LI','BQ','HARD']
+  ];
+  const lvCols=[['H',P.hidden],['LB',P.lockedBox],['LK',P.linked],['BD',P.door],['LI',P.locked],['BQ',P.blockQueue]];
+  const mark=`<span class="on" aria-label="${t('Yes','Có')}">✓</span>`;
+  B['level-config']=`<p class="sec-intro">${t(
+      `Which features each level uses, levels 1 to 40. Hard levels are highlighted.`,
+      `Các tính năng mà mỗi màn sử dụng, từ màn 1 đến màn 40. Màn khó được tô nền.`)}</p>`+
+    `<div class="tbl lvcfg" tabindex="0" role="region" aria-label="${esc(t('Level config','Cấu hình màn chơi'))}"><table><thead>`+
+    `<tr><th scope="col" rowspan="2">${t('Level','Màn')}</th><th scope="colgroup" colspan="${lvCols.length}">${t('Feature','Tính năng')}</th><th scope="col" rowspan="2">${t('Hard','Khó')}</th></tr>`+
+    `<tr>${lvCols.map(c=>`<th scope="col">${c[1]}</th>`).join('')}</tr></thead><tbody>`+
+    LVL.map((r,i)=>{const hard=r.includes('HARD');
+      return `<tr${hard?' class="hard"':''}><th scope="row">${i+1}</th>${lvCols.map(c=>`<td>${r.includes(c[0])?mark:''}</td>`).join('')}<td>${hard?`<span class="hd">${t('Hard','Khó')}</span>`:''}</td></tr>`;}).join('')+
+    `</tbody></table></div>`;
+
+  /* ===== 8. Change note ===== */
   const day=(title,body)=>`<div class="sub"><h3><span>${title}</span></h3>${body}</div>`;
   B['change-note']=`<p class="sec-intro">${t('Changes made to this GDD, newest day first.','Các thay đổi của tài liệu này, ngày mới nhất ở trên cùng.')}</p>`+
+    day(t('3 November 2026','Ngày 3 tháng 11, 2026'),
+      ent(t('Level config','Cấu hình màn chơi'),ul([
+        t(`New section 7, Level config: which features (Hidden Box, Locked Box, Linked Box, Block Door, Locked Item, Block Queue) each level from 1 to 40 uses, and which levels are Hard (10, 15, 20, 25, 30, 35, 40).`,
+          `Thêm mục 7, Cấu hình màn chơi: các tính năng (Hộp ẩn, Hộp bị khóa, Hộp liên kết, Cửa chặn, Vật phẩm bị khóa, Hàng chờ bị chặn) mà mỗi màn từ 1 đến 40 sử dụng, và các màn Khó (10, 15, 20, 25, 30, 35, 40).`),
+        t(`Change note is now section 8.`,`Ghi chú thay đổi giờ là mục 8.`)
+      ])))+
     day(t('1 November 2026','Ngày 1 tháng 11, 2026'),
       ent(t('Tutorial','Hướng dẫn'),ul([
         t(`Booster tutorial popups changed: Hand “Pick a box from any queue”, Shuffle “Shuffle all boxes”, Magnet “Clear one box from the slot”, each on a single line.`,
