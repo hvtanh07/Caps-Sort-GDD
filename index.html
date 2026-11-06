@@ -75,6 +75,16 @@ main{container-type:inline-size;padding:48px clamp(20px,5vw,64px) 30vh;width:100
 .clr:hover{background:var(--rail-hover)}
 .panel{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:4px 10px 28px}
 .rail[data-view="toc"] #results,.rail[data-view="results"] #toc{display:none}
+.xlink{display:flex;align-items:center;gap:10px;margin:2px 8px 12px;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.1);color:var(--rail-ink);text-decoration:none;font:600 .95rem/1.2 var(--body)}
+.xlink:hover{background:rgba(255,255,255,.16)}
+.xlink svg{width:18px;height:18px;flex:none}
+.xlink span{flex:1}
+.xlink .go{width:14px;height:14px;color:var(--rail-muted)}
+.rail[data-view="results"] .xlink{display:none}
+.lv-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:10px 16px;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;font:600 .95rem/1.2 var(--body)}
+.lv-link:hover{filter:brightness(1.08)}
+:root[data-theme="dark"] .lv-link{color:#131826}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lv-link{color:#131826}}
 
 .toc ol{list-style:none;margin:0;padding:0}
 .toc>ol>li{margin-bottom:6px}
@@ -430,6 +440,7 @@ mark.hit{background:var(--mark);color:#18203A;border-radius:3px;padding:0 1px}
       </div>
     </div>
     <div class="panel" id="panel">
+      <a class="xlink" id="diffLink" href="level-difficulty.html"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 16V9M10 16V4M16 16v-5"/></svg><span>Level difficulty</span><svg class="go" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></a>
       <div id="results"></div>
       <div class="sr" id="status" role="status"></div>
       <nav class="toc" id="toc" aria-label="Contents"></nav>
@@ -494,12 +505,12 @@ const SEC={};
 SECTIONS.forEach(s=>{SEC[s.id]=s;(s.subs||[]).forEach(u=>{SEC[u.id]=u;});});
 
 const UI={
-  en:{sub:'Game design document',search:'Search the GDD',searchShort:'Search',contents:'Contents',language:'Language',clear:'Clear search',
+  en:{sub:'Game design document',diff:'Level difficulty',search:'Search the GDD',searchShort:'Search',contents:'Contents',language:'Language',clear:'Clear search',
       matches:n=>n===1?'1 match':n+' matches',none:q=>`No matches for “${q}”.`,tryShort:'Try a shorter or different word.',
       other:n=>(n===1?'1 match':n+' matches')+' in the Vietnamese version.',switchTo:'Switch to Tiếng Việt',
       tip:'Enter jumps to the next match. Esc clears.',overview:'Overview',wip:'In progress',
       pause:'Pause motion',play:'Play motion',pauseDemo:'Pause demo',playDemo:'Play demo',title:'Caps Sorting GDD'},
-  vi:{sub:'Tài liệu thiết kế game',search:'Tìm trong tài liệu',searchShort:'Tìm kiếm',contents:'Mục lục',language:'Ngôn ngữ',clear:'Xóa tìm kiếm',
+  vi:{sub:'Tài liệu thiết kế game',diff:'Độ khó màn chơi',search:'Tìm trong tài liệu',searchShort:'Tìm kiếm',contents:'Mục lục',language:'Ngôn ngữ',clear:'Xóa tìm kiếm',
       matches:n=>n+' kết quả',none:q=>`Không tìm thấy “${q}”.`,tryShort:'Hãy thử từ khóa ngắn hơn hoặc từ khác.',
       other:n=>`Có ${n} kết quả trong bản tiếng Anh.`,switchTo:'Chuyển sang English',
       tip:'Nhấn Enter để tới kết quả kế tiếp. Nhấn Esc để xóa.',overview:'Tổng quan',wip:'Đang viết',
@@ -1451,6 +1462,7 @@ function view(l){
   B['level-config']=`<p class="sec-intro">${t(
       `Which features each level uses, levels 1 to 40. Hard levels are highlighted.`,
       `Các tính năng mà mỗi màn sử dụng, từ màn 1 đến màn 40. Màn khó được tô nền.`)}</p>`+
+    `<p><a class="lv-link" href="level-difficulty.html">${t('Open the level difficulty page','Mở trang độ khó màn chơi')} →</a></p>`+
     `<div class="tbl lvcfg" tabindex="0" role="region" aria-label="${esc(t('Level config','Cấu hình màn chơi'))}"><table><thead>`+
     `<tr><th scope="col" rowspan="2">${t('Level','Màn')}</th><th scope="colgroup" colspan="${lvCols.length}">${t('Feature','Tính năng')}</th><th scope="col" rowspan="2">${t('Hard','Khó')}</th></tr>`+
     `<tr>${lvCols.map(c=>`<th scope="col">${c[1]}</th>`).join('')}</tr></thead><tbody>`+
@@ -1881,6 +1893,7 @@ function render(){
   main.innerHTML=view(lang);
   toc.innerHTML=tocHTML(lang);
   $('#brandSub').textContent=ui.sub;
+  $('#diffLink span').textContent=ui.diff;
   q.placeholder=narrow.matches?ui.searchShort:ui.search;q.setAttribute('aria-label',ui.search);
   clr.setAttribute('aria-label',ui.clear);
   menuBtn.setAttribute('aria-label',ui.contents);toc.setAttribute('aria-label',ui.contents);
