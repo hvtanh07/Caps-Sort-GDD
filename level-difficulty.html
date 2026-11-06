@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caps Sorting · Level difficulty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Level difficulty page of the Caps Sorting GDD: a 40-level difficulty table + chart, then the choice-width design of
+   the levels that have one (data from the level builder's playtest, 200 runs per bot, with the 2 RV slots). */
+:root{
+  --paper:#EEF1F6; --surface:#FFFFFF; --ink:#18203A; --muted:#566079; --line:#D6DCE8; --tint:#E3E8F1;
+  --rail:#232A40; --rail-ink:#EEF1F8; --accent:#1F55D6; --focus:#1F55D6;
+  --wide:#2f9e6a; --mid:#2f7fbf; --narrow:#d08a1c; --stuck:#c8364e; --good:#2f9e6a; --bad:#c8364e;
+  --r-tut:#8C95A8; --r-intro:#1FA3A0; --r-med:#2F7FBF; --r-after:#2F9E6A; --r-pre:#E08A1E; --r-hard:#C8364E;
+  /* cap colours as in the level builder: 1 Red, 2 Orange, 3 Blue, 4 Green, 5 Purple, 6 Yellow, 7 Cyan, 8 Pink */
+  --c-red:#D9363E; --c-orange:#F58220; --c-blue:#2563EB; --c-green:#1B8641; --c-purple:#7C4DDB; --c-yellow:#F4BE0B; --c-teal:#22B8D1; --c-pink:#F472B6;
+  --display:"Baloo 2","Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#131826; --surface:#1B2234; --ink:#E9EDF7; --muted:#A3ADC4; --line:#2F3852; --tint:#232B41;
+    --rail:#0E1220; --accent:#8FB1FF; --focus:#8FB1FF;
+    --wide:#45b882; --mid:#5a9ee0; --narrow:#e0a23e; --stuck:#e8607a; --good:#45b882; --bad:#e8607a;
+    --r-tut:#7B849A; --r-intro:#3CC2BF; --r-med:#5A9EE0; --r-after:#45B882; --r-pre:#E9A148; --r-hard:#E8607A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131826; --surface:#1B2234; --ink:#E9EDF7; --muted:#A3ADC4; --line:#2F3852; --tint:#232B41;
+  --rail:#0E1220; --accent:#8FB1FF; --focus:#8FB1FF;
+  --wide:#45b882; --mid:#5a9ee0; --narrow:#e0a23e; --stuck:#e8607a; --good:#45b882; --bad:#e8607a;
+  --r-tut:#7B849A; --r-intro:#3CC2BF; --r-med:#5A9EE0; --r-after:#45B882; --r-pre:#E9A148; --r-hard:#E8607A;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--body);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+a{color:var(--accent);text-underline-offset:3px}
+button{font:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0;text-wrap:balance}
+p{margin:0}
+
+.top{position:sticky;top:0;z-index:10;background:var(--rail);color:var(--rail-ink)}
+.top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px max(16px,env(safe-area-inset-left,0px)) 10px max(16px,env(safe-area-inset-right,0px))}
+.back{display:inline-flex;align-items:center;gap:8px;color:var(--rail-ink);text-decoration:none;font:600 .95rem/1 var(--body);padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.08)}
+.back:hover{background:rgba(255,255,255,.14)}
+.back svg{width:16px;height:16px}
+.top .ttl{flex:1;min-width:0;font:800 1.2rem/1.1 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lang{display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:999px;background:rgba(255,255,255,.1);flex:none}
+.lang button{border:0;background:none;color:var(--rail-ink);font:600 .85rem/1 var(--body);padding:9px 12px;border-radius:999px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:#fff;color:#18203A}
+
+main{max-width:1180px;margin:0 auto;padding:32px max(16px,env(safe-area-inset-left,0px)) 80px max(16px,env(safe-area-inset-right,0px));display:grid;gap:36px}
+.intro{display:grid;gap:10px;max-width:80ch}
+.intro h1{font-size:clamp(1.9rem,4vw,2.6rem)}
+.muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:grid;gap:16px;min-width:0}
+.card h2{font-size:1.5rem}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.88rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none}
+
+.chart{overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:640px;height:auto;overflow:visible}
+.chart .bar{cursor:pointer}
+.chart .bar:hover,.chart .bar.on{opacity:.72}
+.readout{min-height:1.6em;font-size:.92rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink)}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+thead th{position:sticky;top:0;background:var(--tint);font-weight:600;font-size:.8rem;color:var(--muted);vertical-align:bottom;white-space:normal;min-width:64px}
+th.l,td.l{text-align:left}
+tbody tr:last-child td,tbody tr:last-child th{border-bottom:0}
+tbody tr.hard{background:color-mix(in srgb,var(--r-hard) 8%,transparent)}
+tbody th{font-weight:700}
+.role{display:inline-block;font-size:.76rem;font-weight:600;padding:1px 9px;border-radius:999px;color:#fff}
+.score{font-weight:700}
+.meter{display:inline-block;width:56px;height:6px;border-radius:3px;background:var(--tint);vertical-align:middle;margin-left:8px;position:relative;overflow:hidden}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+td.w{min-width:170px}
+.strip{display:block;width:160px;height:22px}
+.strip-link{display:inline-block;border-radius:4px}
+.none{color:var(--muted)}
+
+.levels{display:grid;gap:22px}
+.level{scroll-margin-top:72px}
+.lhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.stats{display:flex;flex-wrap:wrap;gap:6px 20px;color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums}
+.stats b{color:var(--ink);font-weight:600}
+.stuck{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:12px}
+.stuck h3{font:600 .8rem/1.2 var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.stuck .title{font-weight:600;font-size:1.05rem}
+.vi-note{font-size:.82rem;color:var(--muted);font-style:italic}
+.board{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:12px;overflow-x:auto}
+.row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:start;min-width:520px}
+.row>.lab{font-size:.8rem;color:var(--muted);padding-top:3px}
+.belt{display:flex;flex-wrap:wrap;gap:4px}
+.belt i{width:13px;height:13px;border-radius:50%;display:block;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
+.slots,.queues{display:flex;flex-wrap:wrap;gap:8px}
+.box{width:78px;border-radius:7px;color:#fff;font-size:.74rem;font-weight:600;padding:5px 6px;line-height:1.25;text-shadow:0 1px 1px rgba(0,0,0,.35);font-variant-numeric:tabular-nums}
+.box small{display:block;font-weight:500;opacity:.95}
+.box.empty{background:transparent;border:1.5px dashed var(--line);color:var(--muted);text-shadow:none;font-weight:500}
+.box.rv{border-style:dotted}
+.box.hid{background:repeating-linear-gradient(135deg,#59606c 0 6px,#4b515c 6px 12px)}
+.box.hl{outline:2.5px solid var(--ink);outline-offset:2px}
+.queue{display:grid;gap:5px;align-content:start}
+.queue .qn{font-size:.74rem;color:var(--muted)}
+.path{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:var(--ink);background:var(--surface)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.verdict{font-size:.72rem;font-weight:600;padding:1px 8px;border-radius:999px;color:#fff;white-space:nowrap;justify-self:start}
+.foot{color:var(--muted);font-size:.85rem;max-width:90ch}
+@media (max-width:640px){
+  .top .ttl{font-size:1rem}
+  .back .txt{display:none}
+  .card{padding:16px}
+  .row{grid-template-columns:1fr;min-width:0}
+}
+@media print{.top{position:static}.chart .bar{cursor:default}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="index.html#level-config"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg><span class="txt" data-t="back"></span></a>
+    <span class="ttl" data-t="title"></span>
+    <div class="lang" id="langSwitch" role="group">
+      <button type="button" data-set-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-set-lang="vi" aria-pressed="false" lang="vi">VI</button>
+    </div>
+  </div>
+</header>
+<main id="main"></main>
+
+<script>
+const DIFF = [{"level": 1, "name": "First Sort", "role": "Hướng dẫn", "random": 100, "stay": 100, "glance": 100, "casual": 100, "watcher": 100, "careful_no_rv": 100}, {"level": 2, "name": "Two Queues", "role": "Hướng dẫn", "random": 100, "stay": 100, "glance": 100, "casual": 100, "watcher": 100, "careful_no_rv": 100}, {"level": 3, "name": "Round and Round", "role": "Hướng dẫn", "random": 100, "stay": 100, "glance": 100, "casual": 100, "watcher": 100, "careful_no_rv": 100}, {"level": 4, "name": "Side by Side", "role": "Medium", "random": 77, "stay": 32, "glance": 88, "casual": 97, "watcher": 100, "careful_no_rv": 100}, {"level": 5, "name": "Colour Patches", "role": "Medium", "random": 24, "stay": 0, "glance": 88, "casual": 75, "watcher": 76, "careful_no_rv": 100}, {"level": 6, "name": "Diagonal Stripes", "role": "Medium", "random": 7, "stay": 0, "glance": 30, "casual": 36, "watcher": 62, "careful_no_rv": 100}, {"level": 7, "name": "Hidden Box", "role": "Giới thiệu", "random": 16, "stay": 65, "glance": 59, "casual": 80, "watcher": 95, "careful_no_rv": 100}, {"level": 8, "name": "Hidden Rows", "role": "Pre-Hard", "random": 7, "stay": 0, "glance": 58, "casual": 64, "watcher": 76, "careful_no_rv": 100}, {"level": 9, "name": "Long Haul", "role": "Pre-Hard", "random": 16, "stay": 14, "glance": 41, "casual": 44, "watcher": 55, "careful_no_rv": 100}, {"level": 10, "name": "First Challenge", "role": "Hard", "random": 13, "stay": 17, "glance": 53, "casual": 25, "watcher": 24, "careful_no_rv": 100}, {"level": 11, "name": "Triple Stack", "role": "Sau Hard", "random": 7, "stay": 14, "glance": 22, "casual": 51, "watcher": 77, "careful_no_rv": 100}, {"level": 12, "name": "Locked Box", "role": "Giới thiệu", "random": 10, "stay": 32, "glance": 67, "casual": 71, "watcher": 96, "careful_no_rv": 100}, {"level": 13, "name": "Key Count", "role": "Medium", "random": 22, "stay": 50, "glance": 68, "casual": 71, "watcher": 87, "careful_no_rv": 100}, {"level": 14, "name": "Blind Picks", "role": "Pre-Hard", "random": 6, "stay": 35, "glance": 37, "casual": 47, "watcher": 52, "careful_no_rv": 100}, {"level": 15, "name": "Three Gates", "role": "Hard", "random": 8, "stay": 0, "glance": 24, "casual": 31, "watcher": 21, "careful_no_rv": 100}, {"level": 16, "name": "Heavy Load", "role": "Sau Hard", "random": 7, "stay": 14, "glance": 65, "casual": 56, "watcher": 82, "careful_no_rv": 100}, {"level": 17, "name": "Linked Box", "role": "Giới thiệu", "random": 14, "stay": 17, "glance": 63, "casual": 74, "watcher": 95, "careful_no_rv": 100}, {"level": 18, "name": "Hidden Links", "role": "Medium", "random": 34, "stay": 32, "glance": 67, "casual": 85, "watcher": 93, "careful_no_rv": 100}, {"level": 19, "name": "Patience", "role": "Pre-Hard", "random": 4, "stay": 32, "glance": 33, "casual": 30, "watcher": 31, "careful_no_rv": 100}, {"level": 20, "name": "Four Queues", "role": "Hard", "random": 2, "stay": 10, "glance": 13, "casual": 20, "watcher": 22, "careful_no_rv": 100}, {"level": 21, "name": "Clear Skies", "role": "Sau Hard", "random": 13, "stay": 17, "glance": 47, "casual": 49, "watcher": 77, "careful_no_rv": 100}, {"level": 22, "name": "Block Door", "role": "Giới thiệu", "random": 14, "stay": 53, "glance": 53, "casual": 73, "watcher": 96, "careful_no_rv": 100}, {"level": 23, "name": "Behind the Door", "role": "Medium", "random": 32, "stay": 19, "glance": 47, "casual": 50, "watcher": 74, "careful_no_rv": 100}, {"level": 24, "name": "Chain Gang", "role": "Pre-Hard", "random": 4, "stay": 21, "glance": 40, "casual": 30, "watcher": 59, "careful_no_rv": 100}, {"level": 25, "name": "Door Lock", "role": "Hard", "random": 6, "stay": 7, "glance": 5, "casual": 15, "watcher": 12, "careful_no_rv": 100}, {"level": 26, "name": "Swing Doors", "role": "Medium", "random": 7, "stay": 32, "glance": 19, "casual": 50, "watcher": 79, "careful_no_rv": 100}, {"level": 27, "name": "Locked Item", "role": "Giới thiệu", "random": 7, "stay": 33, "glance": 66, "casual": 71, "watcher": 94, "careful_no_rv": 100}, {"level": 28, "name": "Secret Cargo", "role": "Medium", "random": 12, "stay": 0, "glance": 18, "casual": 41, "watcher": 68, "careful_no_rv": 100}, {"level": 29, "name": "Rush Hour", "role": "Pre-Hard", "random": 3, "stay": 0, "glance": 10, "casual": 33, "watcher": 70, "careful_no_rv": 100}, {"level": 30, "name": "Deep Freeze", "role": "Hard", "random": 5, "stay": 14, "glance": 31, "casual": 23, "watcher": 24, "careful_no_rv": 100}, {"level": 31, "name": "Cold Storage", "role": "Sau Hard", "random": 1, "stay": 29, "glance": 31, "casual": 44, "watcher": 80, "careful_no_rv": 100}, {"level": 32, "name": "Block Queue", "role": "Giới thiệu", "random": 25, "stay": 17, "glance": 76, "casual": 78, "watcher": 92, "careful_no_rv": 100}, {"level": 33, "name": "Detour", "role": "Medium", "random": 12, "stay": 35, "glance": 40, "casual": 45, "watcher": 76, "careful_no_rv": 100}, {"level": 34, "name": "Tangled", "role": "Pre-Hard", "random": 6, "stay": 11, "glance": 10, "casual": 35, "watcher": 69, "careful_no_rv": 100}, {"level": 35, "name": "Gridlock", "role": "Hard", "random": 2, "stay": 10, "glance": 14, "casual": 30, "watcher": 25, "careful_no_rv": 100}, {"level": 36, "name": "Long Belt", "role": "Sau Hard", "random": 14, "stay": 31, "glance": 47, "casual": 51, "watcher": 73, "careful_no_rv": 100}, {"level": 37, "name": "Night Shift", "role": "Medium", "random": 18, "stay": 14, "glance": 38, "casual": 52, "watcher": 76, "careful_no_rv": 100}, {"level": 38, "name": "Roadblock", "role": "Medium", "random": 7, "stay": 28, "glance": 85, "casual": 50, "watcher": 72, "careful_no_rv": 100}, {"level": 39, "name": "Cold Links", "role": "Pre-Hard", "random": 7, "stay": 16, "glance": 26, "casual": 35, "watcher": 69, "careful_no_rv": 100}, {"level": 40, "name": "Grand Finale", "role": "Hard", "random": 1, "stay": 0, "glance": 7, "casual": 18, "watcher": 49, "careful_no_rv": 100}];
+const MEASURED = {"5": {"steps": [3, 2, 2, 2, 3, 3, 2, 2, 2, 3, 3, 3, 3, 3, 2, 2, 2, 3, 1, 1, 3, 3, 2, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1], "traps": [2, 18], "pick": 18, "ob": 2, "win": [0], "s": {"belt": {"3": 40, "6": 32}, "path": [[[6, 12], [2, 20], [4, 16]], [[1, 12], [2, 16], [6, 24]]], "slots": [null, {"c": 4, "have": 12, "cap": 40, "rv": false}, {"c": 2, "have": 28, "cap": 40, "rv": false}, {"c": 8, "have": 8, "cap": 16, "rv": false}], "rvLeft": 2, "queues": [[{"c": 2, "cap": 40}, {"c": 6, "cap": 24}, {"c": 3, "cap": 40}, {"c": 2, "cap": 32}], [{"c": 2, "cap": 32}, {"c": 8, "cap": 16}, {"c": 4, "cap": 40}], [{"c": 8, "cap": 24}, {"c": 2, "cap": 16}, {"c": 6, "cap": 32}, {"c": 1, "cap": 40}]], "R": 26}}, "6": {"steps": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 1, 3, 2, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 1, 1, 1], "traps": [18, 20, 21], "pick": 18, "ob": 0, "win": [2], "s": {"belt": {"7": 40}, "path": [[[6, 12], [5, 20], [6, 24]], [[6, 20], [5, 24], [6, 20]]], "slots": [{"c": 2, "have": 0, "cap": 24, "rv": false}, {"c": 5, "have": 16, "cap": 24, "rv": false}, null, null], "rvLeft": 2, "queues": [[{"c": 5, "cap": 32}], [{"c": 5, "cap": 40}, {"c": 5, "cap": 40}, {"c": 6, "cap": 40}, {"c": 6, "cap": 40}, {"c": 6, "cap": 40}], [{"c": 5, "cap": 40}, {"c": 6, "cap": 24}, {"c": 5, "cap": 40}, {"c": 5, "cap": 24}, {"c": 5, "cap": 32}]], "R": 26}}, "7": {"steps": [3, 2, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1], "traps": [8], "pick": 8, "ob": 1, "win": [0, 2], "s": {"belt": {"3": 16}, "path": [[[7, 8], [1, 16], [8, 12]], [[7, 20], [1, 16], [8, 24]]], "slots": [{"c": 8, "have": 12, "cap": 24, "rv": false}, {"c": 6, "have": 20, "cap": 40, "rv": false}, {"c": 7, "have": 8, "cap": 24, "rv": false}, null], "rvLeft": 2, "queues": [[{"c": 4, "cap": 40}, {"c": 8, "cap": 24}, {"hid": 1}, {"c": 7, "cap": 32}], [{"c": 5, "cap": 32}, {"hid": 1}, {"c": 2, "cap": 40}, {"hid": 1}], [{"c": 1, "cap": 32}, {"hid": 1}, {"c": 7, "cap": 24}, {"hid": 1}]], "R": 26}}, "8": {"steps": [3, 3, 3, 3, 3, 2, 3, 2, 2, 2, 1, 2, 2, 2, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1], "traps": [8, 10], "pick": 8, "ob": 2, "win": [0, 1], "s": {"belt": {"5": 20}, "path": [[[4, 4], [5, 20], [3, 16]], [[7, 8], [4, 12], [2, 16]]], "slots": [null, {"c": 3, "have": 24, "cap": 40, "rv": false}, {"c": 4, "have": 36, "cap": 40, "rv": false}, {"c": 7, "have": 8, "cap": 16, "rv": false}], "rvLeft": 2, "queues": [[{"c": 2, "cap": 40}, {"c": 8, "cap": 24}, {"hid": 1}, {"c": 5, "cap": 40}], [{"c": 4, "cap": 24}, {"c": 5, "cap": 40}, {"hid": 1}, {"c": 2, "cap": 32}], [{"c": 8, "cap": 24}, {"hid": 1}, {"c": 8, "cap": 16}, {"hid": 1}]], "R": 26}}, "9": {"steps": [2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 2, 2, 1, 1, 1, 1, 1, 1], "traps": [7, 11, 12], "pick": 11, "ob": 1, "win": [0, 2], "s": {"belt": {"2": 28, "6": 4}, "path": [[[6, 12], [7, 16], [8, 24]], [[7, 16], [2, 12], [4, 16]]], "slots": [{"c": 5, "have": 8, "cap": 40, "rv": false}, {"c": 3, "have": 20, "cap": 40, "rv": false}, null, {"c": 4, "have": 16, "cap": 32, "rv": false}], "rvLeft": 2, "queues": [[{"c": 1, "cap": 40}, {"c": 4, "cap": 16}, {"c": 8, "cap": 24}, {"c": 7, "cap": 32}], [{"c": 1, "cap": 24}, {"c": 6, "cap": 40}, {"c": 5, "cap": 24}, {"c": 4, "cap": 32}], [{"c": 8, "cap": 24}, {"c": 6, "cap": 16}, {"c": 7, "cap": 32}, {"c": 2, "cap": 40}]], "R": 26}}, "10": {"steps": [2, 2, 2, 1, 2, 1, 1, 1, 2, 3, 2, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1], "traps": [5, 11], "pick": 11, "ob": 0, "win": [1], "s": {"belt": {"4": 16}, "path": [[[3, 16], [4, 16], [1, 16]], [[5, 8], [7, 12], [1, 16]]], "slots": [{"c": 3, "have": 16, "cap": 32, "rv": false}, {"c": 5, "have": 20, "cap": 40, "rv": false}, {"c": 8, "have": 28, "cap": 32, "rv": false}, null], "rvLeft": 2, "queues": [[{"c": 1, "cap": 16}, {"hid": 1}, {"hid": 1}, {"hid": 1}], [{"c": 7, "cap": 40}, {"hid": 1}, {"hid": 1}, {"hid": 1}], [{"c": 8, "cap": 40}, {"hid": 1}, {"hid": 1}, {"hid": 1}]], "R": 26}}};
+const TEXT = {
+  5: { name: 'Colour Patches', role: 'Medium', title: 'Hạt xanh dương vào băng muộn, hộp Xanh dương duy nhất còn nằm thứ 3 ở hàng 1',
+    sit: 'Level chỉ có Đỏ, Cam, Vàng, Hồng, Xanh lá và đúng một hộp Xanh dương 40, nằm thứ 6 ở hàng 1. Hạt xanh dương chỉ bắt đầu vào băng sau khoảng 22 hàng, khi đã clear được vài hộp. Lúc này băng có 40 hạt xanh dương và 32 hạt vàng, hộp Xanh dương đã lên thứ 3 ở hàng 1 (sau Cam 40 và Vàng 24). Chỉ còn 1 slot trống; ba slot kia là Xanh lá 12/40, Cam 28/40 và Hồng 8/16.',
+    why: 'Hồng 24 (hàng 3) là nước dễ thấy nhưng thua: không có hạt hồng trên băng hay trong các đợt sắp vào, nên nó chiếm chết slot cuối. Chỉ Cam 40 (hàng 1) đi tiếp: có 36 hạt cam sắp vào, gửi nó thì Vàng 24 lên ăn hạt vàng trên băng, rồi đến hộp Xanh dương gỡ kẹt.',
+    lesson: 'Màu chiếm băng mà chỉ có một hộp thì tìm hộp đó và đào đúng hàng của nó, bằng hộp có hạt sắp vào.' },
+  6: { name: 'Diagonal Stripes', role: 'Medium', title: '40 hạt Xanh ngọc nằm chờ trên băng, hộp Xanh ngọc còn ở thứ 6 hàng 3',
+    sit: 'Level có 3 đoạn với bộ màu riêng. Đoạn đầu (Đỏ, Cam, Xanh dương) đã clear, hộp Xanh lá 40 duy nhất (thứ 10 hàng 1) cũng vừa lấy được. Băng còn 40 hạt xanh ngọc, nhưng hộp Xanh ngọc 40 vẫn nằm thứ 6 ở hàng 3, dưới bốn hộp Tím và một hộp Vàng. Hàng 2 toàn hộp Tím, Vàng 40. Slot: Cam 0/24 (hạt cam chỉ đến ở đoạn cuối), Tím 16/24, còn 2 slot trống.',
+    why: 'Cả ba hàng đều đưa lên hộp Tím. Tím 32 (hàng 1) là nước dễ thấy nhưng thua, Tím 40 ở hàng 2 cũng thua. Chỉ Tím 40 ở hàng 3 đi tiếp, vì nó đào xuống hộp Xanh ngọc. Từ bước 14 đến bước 22, gần như mỗi lượt chỉ 1 hàng còn thắng.',
+    lesson: 'Đào đúng hàng chứa hộp đang thiếu, và không gửi hộp mà hạt còn ở xa (như Cam lúc này). Lấy được hộp Xanh ngọc xong thì đoạn cuối mở ra, mỗi bước có 3 hàng đi được.' },
+  7: { name: 'Hidden Box', role: 'Giới thiệu Hộp ẩn', title: 'Trên băng có xanh dương nhưng không có hộp xanh dương nào hiện màu',
+    sit: 'Băng có 16 hạt xanh dương. Không hộp hiện màu nào là xanh dương, nên hộp xanh dương đang nằm trong các hộp ẩn. Còn 1 slot trống.',
+    why: 'Gửi Tím 32 (hàng 2) để lật hộp ẩn thì thua. Gửi Xanh lá 40 (hàng 1) hoặc Đỏ 32 (hàng 3) thì vẫn thắng. Đỏ có 2 đợt sắp vào từ Enter Path.',
+    lesson: 'Màu trên băng mà không có hộp hiện màu tương ứng nghĩa là hộp đó đang ẩn. Chọn hộp để lật sao cho hộp đó không chiếm chết slot.' },
+  8: { name: 'Hidden Rows', role: 'Pre-Hard', title: 'Còn 1 slot, băng toàn tím, hộp Tím bị đè',
+    sit: 'Băng có 20 hạt tím. Hộp Tím 40 nằm dưới Xanh lá 24 ở hàng 2, sau mỗi hộp đầu hàng là hộp ẩn. Chỉ còn 1 slot.',
+    why: 'Hồng 24 (hàng 3) là nước dễ thấy nhưng thua. Xanh lá 24 có hạt xanh lá sắp vào từ cả hai Enter Path và mở đường cho Tím 40. Cam 40 (hàng 1) cũng đi tiếp được.',
+    lesson: 'Hộp dùng để đào cũng chiếm slot. Chọn hộp che sẽ tự đầy nhờ Enter Path.' },
+  9: { name: 'Long Haul', role: 'Pre-Hard', title: 'Băng kín cam, hộp Cam nằm sâu',
+    sit: 'Băng có 28 hạt cam. Hộp Cam 40 là hộp thứ 4 ở hàng 3. Hai đầu hàng là hộp Đỏ: Đỏ 40 ở hàng 1 và Đỏ 24 ở hàng 2. Còn 1 slot.',
+    why: 'Đỏ 24 (hàng 2) là nước dễ thấy nhưng thua. Đỏ 40 (hàng 1) hoặc Hồng 24 (hàng 3, có 24 hạt hồng sắp vào) thì đi tiếp.',
+    lesson: 'Hai hộp cùng màu không giống nhau. Đếm hạt sắp vào so với sức chứa trước khi chọn.' },
+  10: { name: 'First Challenge', role: 'Hard', title: 'Slot cuối cùng, mọi hộp phía sau đều ẩn',
+    sit: 'Còn 1 slot. Hai hộp Xanh dương 32 và Hồng 32 trong slot đang chờ hạt từ Enter Path. Ba đầu hàng là Đỏ 16, Xanh ngọc 40 và Hồng 40, phía sau toàn hộp ẩn.',
+    why: 'Chỉ Xanh ngọc 40 (hàng 2) còn thắng. Đỏ 16 (hàng 1) là nước dễ thấy nhưng thua, Hồng 40 (hàng 3) cũng thua.',
+    lesson: 'Ở level Hard, có lúc chỉ đúng một nước đi tiếp. Người chơi phải đọc cả Enter Path lẫn hàng chờ.' },
+};
+const UPDATED = '2026-11-06';
+
+</script>
+<script>
+(function(){
+'use strict';
+const KEY='capsSortingGddLang';
+let lang='en';
+try{const s=localStorage.getItem(KEY);if(s==='en'||s==='vi')lang=s;}catch(e){}
+const t=(en,vi)=>lang==='vi'?vi:en;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=v=>lang==='vi'?String(v).replace('.',','):String(v);
+
+/* roles as the playtest names them (Vietnamese) -> colour + English label */
+const ROLE={'Hướng dẫn':['tut','Tutorial','Hướng dẫn'],'Giới thiệu':['intro','Intro','Giới thiệu'],'Medium':['med','Medium','Medium'],
+  'Sau Hard':['after','After Hard','Sau Hard'],'Pre-Hard':['pre','Pre-Hard','Pre-Hard'],'Hard':['hard','Hard','Hard']};
+const roleOf=r=>ROLE[r]||['med',r,r];
+const roleCol=r=>`var(--r-${roleOf(r)[0]})`;
+const roleName=r=>t(roleOf(r)[1],roleOf(r)[2]);
+const score=d=>Math.round((100-(d.casual+d.watcher)/2)*10)/10;
+
+const C={1:['red','Red','Đỏ'],2:['orange','Orange','Cam'],3:['blue','Blue','Xanh dương'],4:['green','Green','Xanh lá'],5:['purple','Purple','Tím'],6:['yellow','Yellow','Vàng'],7:['teal','Cyan','Xanh ngọc'],8:['pink','Pink','Hồng']};
+const col=c=>`var(--c-${C[c][0]})`, nm=c=>t(C[c][1],C[c][2]);
+const tone=(v,trap)=>trap?'var(--stuck)':v>=3?'var(--wide)':v===2?'var(--mid)':'var(--narrow)';
+const SVGNS='http://www.w3.org/2000/svg';
+const el=(tag,attrs={},parent)=>{const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.append(e);return e;};
+const h=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;};
+
+const UI={
+  en:{back:'GDD',title:'Level difficulty',lang:'Language'},
+  vi:{back:'GDD',title:'Độ khó màn chơi',lang:'Ngôn ngữ'}
+};
+
+/* a small strip of one level's choice width: one bar per send, height = queues that still win */
+function strip(D){
+  const N=D.steps.length,W=160,H=22,bw=W/N;
+  let s=`<svg class="strip" viewBox="0 0 ${W} ${H}" aria-hidden="true">`;
+  D.steps.forEach((v,i)=>{const hh=Math.max(2,v/3*(H-2));s+=`<rect x="${(i*bw+bw*.1).toFixed(2)}" y="${(H-hh).toFixed(2)}" width="${(bw*.8).toFixed(2)}" height="${hh.toFixed(2)}" rx="1" fill="${tone(v,D.traps.includes(i))}"/>`;});
+  return s+'</svg>';
+}
+
+/* difficulty chart: one bar per level (score), coloured by role */
+function diffChart(host,readout){
+  const W=1000,H=260,m={t:12,r:6,b:34,l:34},MAX=100,N=DIFF.length,bw=(W-m.l-m.r)/N,y=v=>H-m.b-(v/MAX)*(H-m.t-m.b);
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':t('Difficulty score of levels 1 to 40','Điểm khó của màn 1 đến 40')},host);
+  [0,25,50,75,100].forEach(v=>{
+    el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:v?'var(--line)':'var(--ink)','stroke-dasharray':v?'3 4':'', 'stroke-width':v?1:1.2},svg);
+    el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end','font-size':12,fill:'var(--muted)'},svg).textContent=v;
+  });
+  const say=i=>{const d=DIFF[i];
+    readout.innerHTML=`<b>${t('Level','Màn')} ${d.level} · ${esc(d.name)}</b> (${esc(roleName(d.role))}): ${t('score','điểm khó')} <b>${fmt(score(d))}</b>. ${t('Casual','Casual')} ${d.casual}%, ${t('watcher','watcher')} ${d.watcher}%, ${t('random taps','bấm ngẫu nhiên')} ${d.random}%.`;
+    svg.querySelectorAll('.bar').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));};
+  DIFF.forEach((d,i)=>{const v=Math.max(0,score(d)),x=m.l+i*bw+bw*.14,w=bw*.72;
+    const r=el('rect',{x,y:y(v),width:w,height:Math.max(1,y(0)-y(v)),rx:2,fill:roleCol(d.role),class:'bar','data-i':i,tabindex:0},svg);
+    el('title',{},r).textContent=`${t('Level','Màn')} ${d.level}: ${fmt(score(d))}`;
+    r.addEventListener('click',()=>say(i));r.addEventListener('focus',()=>say(i));
+    if(MEASURED[d.level])el('circle',{cx:x+w/2,cy:y(v)-7,r:3.2,fill:'var(--ink)'},svg);
+    if(d.level===1||d.level%5===0)el('text',{x:x+w/2,y:H-12,'text-anchor':'middle','font-size':12,fill:'var(--muted)'},svg).textContent=d.level;
+  });
+  readout.textContent=t('Tap a bar to see that level. A dot marks a level with a choice-width design.','Bấm vào một cột để xem màn đó. Dấu chấm đánh dấu màn đã có thiết kế độ rộng lựa chọn.');
+}
+
+/* choice-width chart of one level */
+function widthChart(n,D,host,readout){
+  const W=900,H=200,m={t:10,r:6,b:34,l:28},MAX=3,N=D.steps.length,bw=(W-m.l-m.r)/N,y=v=>H-m.b-(v/MAX)*(H-m.t-m.b);
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':t(`Winning queues over ${N} sends of level ${n}`,`Số hàng còn thắng qua ${N} lượt gửi của màn ${n}`)},host);
+  for(let v=0;v<=MAX;v++){
+    el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:v?'var(--line)':'var(--ink)','stroke-dasharray':v?'3 4':'','stroke-width':v?1:1.2},svg);
+    el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end','font-size':12,fill:'var(--muted)'},svg).textContent=v;
+  }
+  const say=i=>{const v=D.steps[i],trap=D.traps.includes(i);
+    readout.innerHTML=`<b>${t('Send','Lượt')} ${i+1}</b>: ${t(`${v} queue${v===1?'':'s'} still win`,`${v} hàng còn thắng`)}${trap?t('. Stuck: the obvious tap loses',', kẹt: nước dễ thấy dẫn tới thua'):v===1?t(', only one move left',', chỉ còn một nước'):''}${i===D.pick?t(' (board below)',' (sơ đồ bên dưới)'):''}.`;
+    svg.querySelectorAll('.bar').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));};
+  D.steps.forEach((v,i)=>{const x=m.l+i*bw+bw*.12,w=bw*.76,trap=D.traps.includes(i);
+    const r=el('rect',{x,y:y(v),width:w,height:y(0)-y(v),rx:2,fill:tone(v,trap),class:'bar','data-i':i,tabindex:0},svg);
+    el('title',{},r).textContent=`${t('Send','Lượt')} ${i+1}: ${v}${trap?t(', stuck',', kẹt'):''}`;
+    r.addEventListener('click',()=>say(i));r.addEventListener('focus',()=>say(i));
+    if(trap)el('circle',{cx:x+w/2,cy:y(0)+12,r:Math.min(5,w/2),fill:'var(--stuck)'},svg);
+  });
+  [0,4,9,14,19,24,29,34,39].filter(i=>i<N).forEach(i=>{el('text',{x:m.l+(i+.5)*bw,y:H-4,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},svg).textContent=i+1;});
+  readout.textContent=t('Tap a bar to see that send.','Bấm vào một cột để xem lượt gửi đó.');
+}
+
+const boxHTML=(b,extra='')=>{
+  if(!b)return `<div class="box empty${extra}">${t('Empty','Trống')}</div>`;
+  if(b.empty)return `<div class="box empty rv">RV<small>${t('open, empty','đã mở, trống')}</small></div>`;
+  if(b.hid)return `<div class="box hid">?<small>${t('Hidden Box','Hộp ẩn')}</small></div>`;
+  const amt=b.have!=null?`${b.have}/${b.cap}`:`${b.cap} ${t('items','hạt')}`;
+  return `<div class="box${extra}" style="background:${col(b.c)}">${nm(b.c)}<small>${amt}</small></div>`;
+};
+
+function levelCard(d){
+  const n=d.level,D=MEASURED[n],T=TEXT[n],S=D.s,N=D.steps.length;
+  const ones=D.steps.filter(v=>v===1).length,avg=D.steps.reduce((s,v)=>s+v,0)/N;
+  const sec=h('section','card level');sec.id=`level-${n}`;
+  sec.append(h('div','lhead',`<h2>${t('Level','Màn')} ${n} · ${esc(d.name)}</h2><span class="role" style="background:${roleCol(d.role)}">${esc(roleName(d.role))}</span>`));
+  sec.append(h('div','stats',`<span>${t('Score','Điểm khó')} <b>${fmt(score(d))}</b></span><span><b>${N}</b> ${t('sends','lượt gửi')}</span><span>${t('Average','Trung bình')} <b>${fmt(avg.toFixed(1))}</b> ${t('winning queues','hàng còn thắng')}</span><span><b>${ones}</b> ${t('sends with one move left','lượt chỉ còn 1 nước')}</span><span>${t('Stuck at send','Kẹt ở lượt')} <b>${D.traps.map(k=>k+1).join(', ')}</b></span>`));
+  const ch=h('div','chart'),ro=h('p','readout');sec.append(ch,ro);
+  const st=h('div','stuck');
+  st.append(h('h3',null,`${t('Stuck moment','Tình huống kẹt')} · ${t('send','lượt')} ${D.pick+1}`));
+  if(lang==='en')st.append(h('p','vi-note','The design notes below are written in Vietnamese.'));
+  st.append(h('p','title',esc(T.title)));
+  st.append(h('p',null,esc(T.sit)));
+  const beltList=Object.entries(S.belt).flatMap(([c,k])=>Array(k).fill(+c));
+  const beltHTML=beltList.length?beltList.map(c=>`<i style="background:${col(c)}" title="${esc(nm(c))}"></i>`).join(''):`<span class="path">${t('Empty','Trống')}</span>`;
+  const pathRow=(seq,side)=>`<span class="path"><b style="font-weight:600;color:var(--ink)">${side}</b>${seq.map(([c,k])=>`<span class="chip"><i class="dot" style="background:${col(c)}"></i>${nm(c)} ${k}</span>`).join('<span aria-hidden="true">→</span>')}</span>`;
+  const slots=S.slots.map(s=>boxHTML(s)).join('')+Array(S.rvLeft).fill(`<div class="box empty rv">RV<small>${t('not open','chưa mở')}</small></div>`).join('');
+  const queues=S.queues.map((q,i)=>{
+    const tag=i===D.ob?`<span class="verdict" style="background:var(--bad)">${t('Obvious · loses','Dễ thấy · thua')}</span>`:D.win.includes(i)?`<span class="verdict" style="background:var(--good)">${t('Goes on','Đi tiếp')}</span>`:`<span class="verdict" style="background:var(--bad)">${t('Loses','Thua')}</span>`;
+    return `<div class="queue"><span class="qn">${t('Queue','Hàng')} ${i+1}</span>${q.map((b,k)=>boxHTML(b,k===0?' hl':'')).join('')}${tag}</div>`;}).join('');
+  st.append(h('div','board',
+    `<div class="row"><div class="lab">${t('Belt','Băng chuyền')}</div><div class="belt">${beltHTML}</div></div>`+
+    `<div class="row"><div class="lab">${t('Enter Paths, next rows','Enter Path sắp vào')}</div><div style="display:grid;gap:6px">${pathRow(S.path[0],t('Path 1','Đường 1'))}${S.path[1]?pathRow(S.path[1],t('Path 2','Đường 2')):''}</div></div>`+
+    `<div class="row"><div class="lab">${t('Slots','Slot')}</div><div class="slots">${slots}</div></div>`+
+    `<div class="row"><div class="lab">${t('Queues (front on top)','Hàng chờ (đầu hàng ở trên)')}</div><div class="queues">${queues}</div></div>`));
+  st.append(h('p',null,esc(T.why)));
+  st.append(h('p',null,`<b>${t('What the player learns:','Điều người chơi học được:')}</b> ${esc(T.lesson)}`));
+  sec.append(st);
+  widthChart(n,D,ch,ro);
+  return sec;
+}
+
+function render(){
+  const root=document.documentElement;root.lang=lang;root.dataset.lang=lang;
+  const ui=UI[lang];document.title=`Caps Sorting · ${ui.title}`;
+  document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=ui[e.dataset.t];});
+  const ls=document.getElementById('langSwitch');ls.setAttribute('aria-label',ui.lang);
+  ls.querySelectorAll('[data-set-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.setLang===lang?'true':'false'));
+  const main=document.getElementById('main');main.innerHTML='';
+  const designed=DIFF.filter(d=>MEASURED[d.level]);
+
+  main.append(h('div','intro',
+    `<h1>${t('Level difficulty, levels 1–40','Độ khó màn chơi, màn 1–40')}</h1>`+
+    `<p class="muted">${t(
+      'Bot win rates from the level builder playtest: 200 runs per bot on each level, with the 2 RV slots open. The careful bot is also played without RV, so every level must stay solvable without them. Difficulty score = 100 − (casual + watcher) / 2: higher is harder.',
+      'Tỉ lệ thắng của các bot từ bài đo trong level builder: mỗi bot chơi 200 lượt trên mỗi màn, có mở 2 slot RV. Bot cẩn thận còn được đo khi không dùng RV, để màn nào cũng thắng được mà không cần RV. Điểm khó = 100 − (casual + watcher) / 2: càng cao càng khó.')}</p>`));
+
+  const legend=`<div class="legend">${Object.keys(ROLE).map(r=>`<span><i class="sw" style="background:${roleCol(r)}"></i>${esc(roleName(r))}</span>`).join('')}</div>`;
+  const c1=h('section','card',`<h2>${t('Difficulty score by level','Điểm khó theo màn')}</h2>${legend}`);
+  const ch=h('div','chart'),ro=h('p','readout');c1.append(ch,ro);main.append(c1);diffChart(ch,ro);
+
+  const wl=`<div class="legend"><span><i class="sw" style="background:var(--wide)"></i>${t('3 queues win','3 hàng còn thắng')}</span><span><i class="sw" style="background:var(--mid)"></i>${t('2 queues','2 hàng')}</span><span><i class="sw" style="background:var(--narrow)"></i>${t('1 queue: one move left','1 hàng: chỉ còn một nước')}</span><span><i class="sw" style="background:var(--stuck)"></i>${t('Stuck: the obvious tap loses','Kẹt: nước dễ thấy thì thua')}</span></div>`;
+  const pct=v=>`${v}%`;
+  const rows=DIFF.map(d=>{const D=MEASURED[d.level],s=score(d);
+    const w=D?`<a class="strip-link" href="#level-${d.level}" aria-label="${t('Choice width of level','Độ rộng lựa chọn của màn')} ${d.level}">${strip(D)}</a>`:'';
+    return `<tr${roleOf(d.role)[0]==='hard'?' class="hard"':''}><th scope="row">${d.level}</th><td class="l">${esc(d.name)}</td><td class="l"><span class="role" style="background:${roleCol(d.role)}">${esc(roleName(d.role))}</span></td>`+
+      `<td><span class="score">${fmt(s)}</span><span class="meter"><i style="width:${Math.max(0,Math.min(100,s))}%;background:${roleCol(d.role)}"></i></span></td>`+
+      `<td>${pct(d.random)}</td><td>${pct(d.stay)}</td><td>${pct(d.glance)}</td><td>${pct(d.casual)}</td><td>${pct(d.watcher)}</td><td>${pct(d.careful_no_rv)}</td><td class="l w">${w}</td></tr>`;}).join('');
+  main.append(h('section','card',
+    `<h2>${t('All 40 levels','Cả 40 màn')}</h2>${wl}`+
+    `<div class="tbl" tabindex="0" role="region" aria-label="${t('Difficulty of levels 1 to 40','Độ khó màn 1 đến 40')}"><table><thead><tr>`+
+    `<th scope="col">${t('Level','Màn')}</th><th scope="col" class="l">${t('Name','Tên')}</th><th scope="col" class="l">${t('Role','Vai trò')}</th><th scope="col">${t('Score','Điểm khó')}</th>`+
+    `<th scope="col">${t('Random taps','Bấm ngẫu nhiên')}</th><th scope="col">${t('One queue','Bấm 1 hàng')}</th><th scope="col">${t('Belt glancer','Liếc băng')}</th><th scope="col">Casual</th><th scope="col">${t('Belt watcher','Theo dõi băng')}</th><th scope="col">${t('Careful, no RV','Cẩn thận, không RV')}</th><th scope="col" class="l">${t('Choice width design','Thiết kế độ rộng lựa chọn')}</th>`+
+    `</tr></thead><tbody>${rows}</tbody></table></div>`+
+    `<p class="foot">${t(
+      `Choice width is designed for ${designed.length} levels so far (${designed.map(d=>d.level).join(', ')}); the other levels are left blank. Tap a strip to open that level's design below.`,
+      `Hiện có ${designed.length} màn đã có thiết kế độ rộng lựa chọn (${designed.map(d=>d.level).join(', ')}); các màn khác để trống. Bấm vào một dải để mở thiết kế của màn đó bên dưới.`)}</p>`));
+
+  const lv=h('div','levels');
+  lv.append(h('div','intro',`<h2 style="font-size:1.7rem">${t('Choice width by level','Độ rộng lựa chọn theo màn')}</h2>`+
+    `<p class="muted">${t(
+      'At each send on the careful bot\'s line, every queue that can be tapped is tried, then the careful bot plays on to the end without RV. The bar is how many queues still win. A stuck send is one where the obvious tap (the belt-watching pick) loses.',
+      'Tại mỗi lượt gửi trên đường chơi của bot cẩn thận, thử gửi từng hàng có thể bấm, rồi để bot cẩn thận chơi tiếp tới hết màn mà không dùng RV. Cột là số hàng còn thắng. Lượt kẹt là lượt mà nước dễ thấy (bot theo dõi băng chọn) dẫn tới thua.')}</p>${wl}`));
+  designed.forEach(d=>lv.append(levelCard(d)));
+  main.append(lv);
+  main.append(h('p','foot',t(`Data from the level builder (hvtanh07/Cabs-Sort-level-builder), updated ${UPDATED}.`,`Dữ liệu từ level builder (hvtanh07/Cabs-Sort-level-builder), cập nhật ${UPDATED}.`)));
+}
+
+document.getElementById('langSwitch').addEventListener('click',e=>{const b=e.target.closest('[data-set-lang]');if(!b||b.dataset.setLang===lang)return;
+  lang=b.dataset.setLang;try{localStorage.setItem(KEY,lang);}catch(err){}render();});
+render();
+if(location.hash){const tgt=document.getElementById(location.hash.slice(1));if(tgt)tgt.scrollIntoView();}
+})();
+</script>
+</body>
+</html>
