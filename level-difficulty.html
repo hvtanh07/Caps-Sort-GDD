@@ -389,7 +389,7 @@ function render(){
   const rows=DIFF.map(d=>{const D=MEASURED[d.level],s=score(d);
     const Pl=PLAN[d.level];
     const w=D?`<span class="wcell"><a class="strip-link" href="#level-${d.level}" aria-label="${t('Choice width of level','Độ rộng lựa chọn của màn')} ${d.level}">${strip(D)}</a><span class="tag">${t('Measured','Đo thật')}</span></span>`:
-      Pl?(REBUILT[d.level]?`<span class="wcell"><a class="strip-link" href="#level-${d.level}" aria-label="${t('Measured choice width of level','Độ rộng lựa chọn đo thật của màn')} ${d.level}">${strip(REBUILT[d.level])}</a><span class="tag">${t('Measured','Đo thật')}</span></span>`:'')+`<span class="wcell"><a class="strip-link" href="#level-${d.level}" aria-label="${t('Planned choice width of level','Thiết kế độ rộng lựa chọn của màn')} ${d.level}">${planStrip(Pl)}</a><span class="tag">${t('Plan','Kế hoạch')}</span></span>`:'';
+      Pl?(REBUILT[d.level]?`<span class="wcell"><a class="strip-link" href="#level-${d.level}" aria-label="${t('Measured choice width of level','Độ rộng lựa chọn đo thật của màn')} ${d.level}">${strip(REBUILT[d.level])}</a><span class="tag">${t('Measured','Đo thật')}</span></span>`:''):'';
     return `<tr${roleOf(d.role)[0]==='hard'?' class="hard"':''}><th scope="row">${d.level}</th><td class="l">${esc(d.name)}</td><td class="l"><span class="role" style="background:${roleCol(d.role)}">${esc(roleName(d.role))}</span></td>`+
       `<td><span class="score">${fmt(s)}</span><span class="meter"><i style="width:${Math.max(0,Math.min(100,s))}%;background:${roleCol(d.role)}"></i></span></td>`+
       `<td>${pct(d.random)}</td><td>${pct(d.stay)}</td><td>${pct(d.glance)}</td><td>${pct(d.casual)}</td><td>${pct(d.watcher)}</td><td>${pct(d.careful_no_rv)}</td><td class="l w">${w}</td></tr>`;}).join('');
@@ -400,8 +400,8 @@ function render(){
     `<th scope="col">${t('Random taps','Bấm ngẫu nhiên')}</th><th scope="col">${t('One queue','Bấm 1 hàng')}</th><th scope="col">${t('Belt glancer','Liếc băng')}</th><th scope="col">Casual</th><th scope="col">${t('Belt watcher','Theo dõi băng')}</th><th scope="col">${t('Careful, no RV','Cẩn thận, không RV')}</th><th scope="col" class="l">${t('Choice width design','Thiết kế độ rộng lựa chọn')}</th>`+
     `</tr></thead><tbody>${rows}</tbody></table></div>`+
     `<p class="foot">${t(
-      `Measured: levels ${designed.map(d=>d.level).join(', ')} were built to their design, and the strip is measured on the built level (one bar per send). Levels 11–40 were rebuilt to their design on 2026-11-06: the Measured strip is the built level (one bar per send), the Plan strip is the design target (one bar per 5% of the level). Levels 1–4 are left blank. Tap a strip to open that level below.`,
-      `Đo thật: màn ${designed.map(d=>d.level).join(', ')} đã dựng theo thiết kế, dải là số đo trên màn thật (mỗi cột là một lượt gửi). Màn 11–40 đã dựng lại theo thiết kế ngày 2026-11-06: dải Đo thật là màn đã dựng (mỗi cột là một lượt gửi), dải Kế hoạch là thiết kế mục tiêu (mỗi cột là 5% màn chơi). Màn 1–4 để trống. Bấm vào một dải để mở màn đó bên dưới.`)}</p>`));
+      `Measured: levels ${designed.map(d=>d.level).join(', ')} were built to their design, and the strip is measured on the built level (one bar per send). Levels 11–40 were rebuilt to their design on 2026-11-06, and the strip is measured on the built level (one bar per send). Levels 1–4 are left blank. Tap a strip to open that level below.`,
+      `Đo thật: màn ${designed.map(d=>d.level).join(', ')} đã dựng theo thiết kế, dải là số đo trên màn thật (mỗi cột là một lượt gửi). Màn 11–40 đã dựng lại theo thiết kế ngày 2026-11-06, dải là số đo trên màn đã dựng (mỗi cột là một lượt gửi). Màn 1–4 để trống. Bấm vào một dải để mở màn đó bên dưới.`)}</p>`));
 
   const lv=h('div','levels');
   lv.append(h('div','intro',`<h2 style="font-size:1.7rem">${t('Choice width by level','Độ rộng lựa chọn theo màn')}</h2>`+
