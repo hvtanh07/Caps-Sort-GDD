@@ -300,29 +300,15 @@ function planChart(n,Pl,host,readout){
 }
 
 function planCard(d){
-  const n=d.level,Pl=PLAN[n],N=Pl.w.length,ones=Pl.w.filter(v=>v===1).length,avg=Pl.w.reduce((s,v)=>s+v,0)/N;
+  const n=d.level,Pl=PLAN[n],R=REBUILT[n];
   const sec=h('section','card level');sec.id=`level-${n}`;
-  sec.append(h('div','lhead',`<h2>${t('Level','Màn')} ${n} · ${esc(d.name)}</h2><span class="role" style="background:${roleCol(d.role)}">${esc(roleName(d.role))}</span><span class="tag">${t('Plan','Kế hoạch')}</span>`));
-  sec.append(h('div','stats',`<span>${t('Score','Điểm khó')} <b>${fmt(score(d))}</b></span><span><b>${Pl.q}</b> ${t('queues','hàng chờ')}</span><span>${t('Planned average','Trung bình theo thiết kế')} <b>${fmt(avg.toFixed(1))}</b> ${t('winning queues','hàng còn thắng')}</span><span><b>${Pl.st.length}</b> ${t('stuck moments','chỗ kẹt')}</span><span><b>${ones*5}%</b> ${t('of the level with one move left','của màn chỉ còn 1 nước')}</span>`));
-  sec.append(h('div','els',Pl.el.length?Pl.el.map(k=>`<span>${esc(elName(k))}</span>`).join(''):`<span>${t('No elements','Không có yếu tố')}</span>`));
-  const ch=h('div','chart'),ro=h('p','readout');sec.append(ch,ro);
-  const st=h('div','stuck');
-  st.append(h('h3',null,t('Design','Thiết kế')));
-  if(lang==='en')st.append(h('p','vi-note','The design notes below are written in Vietnamese.'));
-  st.append(h('p','title',esc(Pl.idea)));
-  st.append(h('ol','plist',Pl.st.map((x,k)=>`<li><span class="at">${t('Stuck','Kẹt')} ${k+1} · ${t('around','khoảng')} ${x.at*5+3}%</span><span class="k">${esc(x.kind)}</span><span>${esc(x.sit)}</span><span>${esc(x.move)}</span></li>`).join('')));
-  st.append(h('p',null,`<b>${t('What the player learns:','Điều người chơi học được:')}</b> ${esc(Pl.lesson)}`));
-  const R=REBUILT[n];
+  sec.append(h('div','lhead',`<h2>${t('Level','Màn')} ${n} · ${esc(d.name)}</h2><span class="role" style="background:${roleCol(d.role)}">${esc(roleName(d.role))}</span><span class="tag">${t('Measured','Đo thật')}</span>`));
   if(R){
-    const N2=R.steps.length,tr=R.traps.map(i=>Math.round(i/N2*100)+'%').join(', ');
-    const ms=h('div','stuck');
-    ms.append(h('h3',null,`${t('Measured on the rebuilt level','Đo thật trên màn đã dựng lại')} <span class="tag">${t('Measured','Đo thật')}</span>`));
-    ms.append(h('p',null,`${t('Score','Điểm khó')} <b>${fmt(score(d))}</b> · ${N2} ${t('sends','lượt gửi')} · ${t('stuck sends at','lượt kẹt ở')} <b>${tr||'–'}</b> ${t('of the level','của màn')}.`));
-    const ch2=h('div','chart'),ro2=h('p','readout');ms.append(ch2,ro2);sec.append(ms);
-    widthChart(n,R,ch2,ro2);
+    const N=R.steps.length,ones=R.steps.filter(v=>v===1).length,avg=R.steps.reduce((s,v)=>s+v,0)/N,tr=R.traps.map(i=>Math.round(i/N*100)+'%').join(', ');
+    sec.append(h('div','stats',`<span>${t('Score','Điểm khó')} <b>${fmt(score(d))}</b></span><span><b>${R.q}</b> ${t('queues','hàng chờ')}</span><span><b>${N}</b> ${t('sends','lượt gửi')}</span><span>${t('Average','Trung bình')} <b>${fmt(avg.toFixed(1))}</b> ${t('winning queues','hàng còn thắng')}</span><span><b>${ones}</b> ${t('sends with one move left','lượt chỉ còn 1 nước')}</span><span>${t('Stuck sends at','Lượt kẹt ở')} <b>${tr||'–'}</b> ${t('of the level','của màn')}</span>`));
   }
-  sec.append(st);
-  planChart(n,Pl,ch,ro);
+  if(Pl)sec.append(h('div','els',Pl.el.length?Pl.el.map(k=>`<span>${esc(elName(k))}</span>`).join(''):`<span>${t('No elements','Không có yếu tố')}</span>`));
+  if(R){const ch=h('div','chart'),ro=h('p','readout');sec.append(ch,ro);widthChart(n,R,ch,ro);}
   return sec;
 }
 
@@ -419,10 +405,10 @@ function render(){
     ['Medium',t('Right after an intro level (13, 18, 23, 28, 33): Medium, but only about as hard as level 8. It reuses the new element with the challenge rules below.','Ngay sau màn giới thiệu (13, 18, 23, 28, 33): Medium nhưng không cần quá khó, khoảng bằng level 8. Dùng lại yếu tố mới theo các quy tắc thử thách bên dưới.')],
     ['Pre-Hard',t('At least as hard as level 29. Two stucks, at about 1/3 and 2/3, each with 10% of the level with one move left.','Ít nhất bằng level 29. Hai chỗ kẹt ở khoảng 1/3 và 2/3, mỗi chỗ 10% màn chỉ còn 1 nước.')],
     ['Hard',t('At least as hard as level 10. Three stucks (about 25%, 45%, 70%), the last one a run of 20% of the level with one move left. Wide only at the very start and end.','Ít nhất bằng level 10. Ba chỗ kẹt (khoảng 25%, 45%, 70%), chỗ cuối kéo dài 20% màn chỉ còn 1 nước. Chỉ rộng ở đầu và cuối màn.')]];
-  pv.append(h('div','intro',`<h2 style="font-size:1.7rem">${t('Planned choice width, levels 11–40','Thiết kế độ rộng lựa chọn, màn 11–40')}</h2>`+
+  pv.append(h('div','intro',`<h2 style="font-size:1.7rem">${t('Choice width by level, levels 11–40','Độ rộng lựa chọn theo màn, màn 11–40')}</h2>`+
     `<p class="muted">${t(
-      'Each level\'s design follows its role and the elements it uses (GDD section 7, Level config). Each bar is 5% of the level: how many queues should still win there. Numbered red dots are the planned stuck moments. The levels were rebuilt to these designs; each card also shows the choice width measured on the built level.',
-      'Thiết kế của mỗi màn dựa trên vai trò và các yếu tố màn đó dùng (GDD mục 7, Cấu hình màn chơi). Mỗi cột là 5% màn chơi: số hàng nên còn thắng ở đoạn đó. Chấm đỏ có số là các chỗ kẹt theo kế hoạch. Các màn đã được dựng lại theo thiết kế này; mỗi thẻ có thêm độ rộng lựa chọn đo thật trên màn đã dựng.')}</p>${wl}`));
+      'Measured on each built level, the same way as levels 5–10: at each send on the careful bot\'s line, every queue that can be tapped is tried, then the careful bot plays on to the end without RV. The bar is how many queues still win; a red dot marks a stuck send (the obvious tap loses). The shape each role aims for is listed below.',
+      'Đo trên từng màn đã dựng, cùng cách với màn 5–10: tại mỗi lượt gửi trên đường chơi của bot cẩn thận, thử gửi từng hàng có thể bấm, rồi để bot cẩn thận chơi tiếp tới hết màn mà không dùng RV. Cột là số hàng còn thắng; chấm đỏ là lượt kẹt (nước dễ thấy thì thua). Khung mỗi vai trò nhắm tới được liệt kê bên dưới.')}</p>${wl}`));
   pv.append(h('section','card',`<h2>${t('Shape by role','Khung theo vai trò')}</h2><ul class="rules">${R.map(([r,txt])=>`<li><span class="role" style="background:${roleCol(r)}">${esc(roleName(r))}</span><span>${esc(txt)}</span></li>`).join('')}</ul>`));
   planned.forEach(d=>pv.append(planCard(d)));
   main.append(pv);
